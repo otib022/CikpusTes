@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Cikpus Test</title>
+  <title>Cikpus Test/title>
 
   <style>
     * { box-sizing: border-box; }
@@ -302,11 +302,11 @@
       top: 50px;
       right: 0;
       bottom: 0;
-      width: 22vw;
-      min-width: 72px;
-      max-width: 132px;
+      width: 50vw;
+      min-width: 50vw;
+      max-width: 50vw;
       z-index: 946;
-      background: rgba(255, 0, 0, 0.01);
+      background: rgba(255, 0, 0, 0.006);
       pointer-events: auto;
       touch-action: none;
     }
@@ -322,18 +322,8 @@
     }
 
     #right-touch-guard::after {
-      content: "AREA PENGAWAS";
-      position: absolute;
-      right: 2px;
-      top: 50%;
-      transform: translateY(-50%) rotate(90deg);
-      transform-origin: center;
-      color: rgba(255, 0, 0, 0.16);
-      font-size: 9px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      white-space: nowrap;
-      pointer-events: none;
+      content: "";
+      display: none;
     }
 
     #copy-indicator {
@@ -441,20 +431,21 @@
   <div id="start-screen">
     <div class="panel" id="panel-konten">
       <h1 class="main-title">CIKPUS CYBERLOCK</h1>
-      <div class="sub-title">UJIAN ANTI CURANG</div>
+      <div class="sub-title">UJIAN ANTI CURANG !</div>
 
       <div class="alert-box">
         <b>PERINGATAN UJIAN:</b><br><br>
         1. Gunakan 1 HP untuk ujian.<br>
         2. Login email Google sebelum mulai.<br>
         3. Isi nama dan kelas dengan benar.<br>
-        4. Kerjakan dan scroll soal hanya di area kiri.<br>
-        5. Jangan sentuh area kanan, buka Google, split screen, screenshot, atau keluar layar.<br>
-        6. Jika melanggar, layar dikunci dan HP bergetar.
+        4. Kerjakan dan scroll soal hanya di setengah layar kiri.<br>
+        5. Setengah layar kanan adalah zona pengawas transparan, jangan disentuh.<br>
+        6. Jangan buka Google, split screen, screenshot, atau keluar layar.<br>
+        7. Jika melanggar, layar dikunci dan HP bergetar.
       </div>
 
       <div class="info-box">
-        Setelah klik <b>Mulai Ujian</b>, kamera, layar penuh, proteksi layar, dan zona pengawas kanan wajib aktif sampai ujian selesai.
+        Setelah klik <b>Mulai Ujian</b>, kamera, layar penuh, proteksi layar, dan zona pengawas transparan di setengah kanan layar wajib aktif sampai ujian selesai.
       </div>
 
       <div class="form-group">
@@ -547,6 +538,7 @@
     // VARIABEL SISTEM
     // ============================================================
     const urlParams = new URLSearchParams(window.location.search);
+
     // Mendukung berbagai variasi parameter:
     // ?id=Info, ?ID=INFO, ?Id=info, ?kode=Info, ?KODE=INFO
     function ambilKodeUjianDariURL() {
@@ -558,6 +550,11 @@
           return nilai.trim().toLowerCase();
         }
       }
+
+      return "";
+    }
+
+    const kodeUjian = ambilKodeUjianDariURL();
 
     const tabId = buatIdUnik();
     const deviceId = ambilAtauBuatDeviceId();
@@ -614,7 +611,7 @@
       updateChecklist();
 
       if (!kodeUjian) {
-        tampilkanError("LINK SALAH", "Tambahkan kode ujian di URL. Contoh: ?id=Info");
+        tampilkanError("LINK SALAH", "Tambahkan kode ujian di URL. Contoh: ?id=Info atau ?ID=INFO");
         return;
       }
 
@@ -1043,7 +1040,7 @@
           if (!examAktif || statusTerkunci) return;
 
           tampilIndikator("Tekan lama area kanan terdeteksi");
-          prosesPelanggaran("Tekan lama di area kanan terdeteksi. Area kanan bukan area menjawab soal.");
+          prosesPelanggaran("Tekan lama di setengah layar kanan terdeteksi. Area kanan adalah zona pengawas transparan.");
         }, 450);
       }, { passive: false });
 
@@ -1064,7 +1061,7 @@
 
         if (geserX > 12 || geserY > 12) {
           tampilIndikator("Gerakan di area kanan terdeteksi");
-          prosesPelanggaran("Gerakan di area kanan terdeteksi. Saat ujian hanya boleh scroll soal di area kiri.");
+          prosesPelanggaran("Gerakan di setengah layar kanan terdeteksi. Saat ujian hanya boleh scroll soal di area kiri.");
         }
       }, { passive: false });
 
@@ -1080,7 +1077,7 @@
         }
 
         tampilIndikator("Sentuhan area kanan terdeteksi");
-        prosesPelanggaran("Sentuhan di area kanan terdeteksi. Area kanan adalah area pengawas.");
+        prosesPelanggaran("Sentuhan di setengah layar kanan terdeteksi. Area kanan adalah zona pengawas transparan.");
       }, { passive: false });
 
       guard.addEventListener("mousedown", function(event) {
@@ -1090,7 +1087,7 @@
         event.stopPropagation();
 
         tampilIndikator("Klik area kanan terdeteksi");
-        prosesPelanggaran("Klik di area kanan terdeteksi. Area kanan adalah area pengawas.");
+        prosesPelanggaran("Klik di setengah layar kanan terdeteksi. Area kanan adalah zona pengawas transparan.");
       });
 
       guard.addEventListener("contextmenu", function(event) {
