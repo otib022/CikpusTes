@@ -547,7 +547,17 @@
     // VARIABEL SISTEM
     // ============================================================
     const urlParams = new URLSearchParams(window.location.search);
-    const kodeUjian = (urlParams.get("id") || "").trim().toLowerCase();
+    // Mendukung berbagai variasi parameter:
+    // ?id=Info, ?ID=INFO, ?Id=info, ?kode=Info, ?KODE=INFO
+    function ambilKodeUjianDariURL() {
+      const daftarNamaParameter = ["id", "ID", "Id", "iD", "kode", "KODE", "Kode"];
+
+      for (const nama of daftarNamaParameter) {
+        const nilai = urlParams.get(nama);
+        if (nilai && nilai.trim() !== "") {
+          return nilai.trim().toLowerCase();
+        }
+      }
 
     const tabId = buatIdUnik();
     const deviceId = ambilAtauBuatDeviceId();
