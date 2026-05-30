@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Cikpus CyberLock</title>
+  <title>Cikpus CyberLock Final - URL Dynamic Spreadsheet Fix</title>
   <link rel="preconnect" href="https://docs.google.com">
   <link rel="preconnect" href="https://accounts.google.com">
   <link rel="dns-prefetch" href="https://docs.google.com">
@@ -552,6 +552,7 @@
 
       <div class="btn-row">
         <a class="btn-link-google" href="https://accounts.google.com/" target="_blank" rel="noopener noreferrer">Login Email Google Dulu</a>
+        <button class="btn-dark" type="button" onclick="refreshDatabaseManual()">Muat Ulang Database</button>
         <button class="btn-primary" id="btn-mulai" onclick="inisialisasiAplikasi()" disabled>Memuat Ujian...</button>
       </div>
 
@@ -560,7 +561,7 @@
       </div>
 
       <div class="small-note">
-        Prestasi itu BAIK, tapi JUJUR Jauh LEBIH BAIK !
+        Format Spreadsheet: Kolom A Nama Mapel, Kolom B Kode Ujian, Kolom C Link Google Form. Sistem memakai cache global agar lebih cepat. Pastikan sudah Publish to Web.
       </div>
     </div>
   </div>
@@ -663,18 +664,28 @@
       return "";
     }
 
-    const kodeUjian = ambilKodeUjianDariURL();
+    let kodeUjian = ambilKodeUjianDariURL();
 
     const tabId = buatIdUnik();
     const deviceId = ambilAtauBuatDeviceId();
-    const storagePrefix = `cyberlock_smartphone_${kodeUjian || "default"}`;
+    let storagePrefix = "";
+    let KEY_ACTIVE = "";
+    let KEY_BREACH = "";
+    let KEY_LOG = "";
+    let KEY_CACHE = "";
+    let KEY_CACHE_GLOBAL = `cyberlock_global_database_cache_${SPREADSHEET_ID}_${SHEET_GID}`;
+    let KEY_TOKEN_UJI_COBA_USED = "";
 
-    const KEY_ACTIVE = `${storagePrefix}_active_session`;
-    const KEY_BREACH = `${storagePrefix}_breach`;
-    const KEY_LOG = `${storagePrefix}_last_log`;
-    const KEY_CACHE = `${storagePrefix}_database_cache`;
-    const KEY_CACHE_GLOBAL = `cyberlock_global_database_cache_${SPREADSHEET_ID}_${SHEET_GID}`;
-    const KEY_TOKEN_UJI_COBA_USED = `${storagePrefix}_token_uji_coba_used`;
+    function perbaruiKeyPenyimpanan() {
+      storagePrefix = `cyberlock_smartphone_${kodeUjian || "default"}`;
+      KEY_ACTIVE = `${storagePrefix}_active_session`;
+      KEY_BREACH = `${storagePrefix}_breach`;
+      KEY_LOG = `${storagePrefix}_last_log`;
+      KEY_CACHE = `${storagePrefix}_database_cache`;
+      KEY_TOKEN_UJI_COBA_USED = `${storagePrefix}_token_uji_coba_used`;
+    }
+
+    perbaruiKeyPenyimpanan();
 
     let peserta = "";
     let examAktif = false;
@@ -721,6 +732,9 @@
     // LOAD AWAL
     // ============================================================
     window.addEventListener("load", async () => {
+      kodeUjian = ambilKodeUjianDariURL();
+      perbaruiKeyPenyimpanan();
+      mulaiPantauPerubahanURL();
       mulaiJamTanggal();
       siapkanKomunikasiAntarTab();
       updateChecklist();
@@ -748,10 +762,82 @@
       await loadDatabaseUjian();
     });
 
+
+    function refreshDatabaseManual() {
+      const kodeBaru = ambilKodeUjianDariURL();
+
+      if (!kodeBaru) {
+        alert("Kode ujian belum ada di URL. Contoh: ?ID=INFO");
+        return;
+      }
+
+      kodeUjian = kodeBaru;
+      perbaruiKeyPenyimpanan();
+      localStorage.removeItem(KEY_CACHE);
+      sessionStorage.removeItem(KEY_CACHE_GLOBAL);
+
+      ubahStatus("Memuat ulang Google Spreadsheet...");
+      loadDatabaseUjian();
+    }
+
+    function mulaiPantauPerubahanURL() {
+      let urlTerakhir = window.location.href;
+
+      setInterval(() => {
+        if (window.location.href !== urlTerakhir) {
+          urlTerakhir = window.location.href;
+
+          const kodeBaru = ambilKodeUjianDariURL();
+
+          if (kodeBaru && kodeBaru !== kodeUjian) {
+            kodeUjian = kodeBaru;
+            perbaruiKeyPenyimpanan();
+            loadDatabaseUjian();
+          }
+        }
+      }, 600);
+
+      window.addEventListener("popstate", () => {
+        const kodeBaru = ambilKodeUjianDariURL();
+        if (kodeBaru && kodeBaru !== kodeUjian) {
+          kodeUjian = kodeBaru;
+          perbaruiKeyPenyimpanan();
+          loadDatabaseUjian();
+        }
+      });
+
+      window.addEventListener("pageshow", () => {
+        const kodeBaru = ambilKodeUjianDariURL();
+        if (kodeBaru && kodeBaru !== kodeUjian) {
+          kodeUjian = kodeBaru;
+          perbaruiKeyPenyimpanan();
+          loadDatabaseUjian();
+        }
+      });
+    }
+
     // ============================================================
     // DATABASE CEPAT
     // ============================================================
+
+    function resetStatusDatabaseUntukKodeBaru() {
+      databaseSiap = false;
+      linkGoogleForm = "";
+      namaMapel = "";
+      formLoadCount = 0;
+
+      const btn = document.getElementById("btn-mulai");
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "Memuat Ujian...";
+      }
+
+      document.getElementById("exam-code-label").innerText = `KODE: ${kodeUjian.toUpperCase()}`;
+      updateChecklist();
+    }
     async function loadDatabaseUjian() {
+      resetStatusDatabaseUntukKodeBaru();
+
       const dataLokal = ambilDariDatabaseLokal();
 
       if (dataLokal) {
@@ -820,7 +906,7 @@
           if (tampilkanErrorJikaGagal) {
             tampilkanError(
               "KODE TIDAK DITEMUKAN",
-              `Kode "${kodeUjian}" tidak ada di Spreadsheet. Pastikan kolom A Nama Mapel, kolom B Kode Ujian, kolom C Link Google Form.`
+              `Kode "${kodeUjian.toUpperCase()}" tidak ada di Spreadsheet. Pastikan kolom A Nama Mapel, kolom B Kode Ujian, kolom C Link Google Form, dan Spreadsheet sudah Publish to Web.`
             );
           }
           return;
@@ -1938,8 +2024,20 @@
     function cacheMasihValid(data, abaikanMasaBerlaku = false) {
       if (!data || !data.csvText || !data.savedAt) return false;
 
+      if (data.spreadsheetId && data.spreadsheetId !== SPREADSHEET_ID) return false;
+      if (data.gid && data.gid !== SHEET_GID) return false;
+
       const umurCache = Date.now() - data.savedAt;
       if (!abaikanMasaBerlaku && umurCache > DATABASE_CACHE_TTL) return false;
+
+      // Cache hanya dianggap valid jika CSV memang berisi kode yang sedang dibuka.
+      try {
+        const db = buatDatabaseDariCSV(data.csvText);
+        const dataUjian = db.get(kodeUjian);
+        if (!dataUjian || !dataUjian.link) return false;
+      } catch (e) {
+        return false;
+      }
 
       return true;
     } catch (e) {
