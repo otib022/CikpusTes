@@ -764,7 +764,7 @@
         }
 
         setDataUjian(dataUjian, "spreadsheet");
-        aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Silakan login email Google, lalu klik Mulai Ujian.`);
+        aktifkanTombolMulai(`Ujian: ${namaMapel} siap. Silahkan login email Google terlebih dahulu, lalu klik Mulai Ujian.`);
       } catch (error) {
         const cacheLama = ambilCacheDatabase(true);
 
@@ -774,13 +774,13 @@
 
           if (dataCache && dataCache.link) {
             setDataUjian(dataCache, "cache lama");
-            aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Memakai data terakhir karena Spreadsheet lambat.`);
+            aktifkanTombolMulai(`Ujian : ${namaMapel}. Memakai data terakhir karena Spreadsheet lambat.`);
             return;
           }
         }
 
         if (tampilkanErrorJikaGagal) {
-          tampilkanError("DATABASE BELUM TERSAMBUNG", "Pastikan Spreadsheet sudah Publish to Web dan format kolom A-B-C benar.");
+          tampilkanError("DATABASE BELUM TERSAMBUNG", "Pastikan Spreadsheet sudah Publish to Web dan format kolom A-B-C sudah benar.");
         }
       }
     }
