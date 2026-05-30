@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Cikpus Test</title>
+  <title>Cikpus CyberLock</title>
 
   <style>
     * { box-sizing: border-box; }
+
+    :root {
+      --zona-kanan: 60vw;
+    }
 
     html, body {
       margin: 0;
@@ -302,11 +306,11 @@
       top: 50px;
       right: 0;
       bottom: 0;
-      width: 60vw;
-      min-width: 60vw;
-      max-width: 60vw;
+      width: var(--zona-kanan);
+      min-width: var(--zona-kanan);
+      max-width: var(--zona-kanan);
       z-index: 946;
-      background: rgba(255, 0, 0, 0.006);
+      background: rgba(255, 0, 0, 0.004);
       pointer-events: auto;
       touch-action: none;
     }
@@ -324,6 +328,30 @@
     #right-touch-guard::after {
       content: "";
       display: none;
+    }
+
+    #zone-warning {
+      display: none;
+      position: fixed;
+      top: 58px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 981;
+      max-width: 94%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f59e0b;
+      color: #111827;
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+      box-shadow: 0 8px 28px rgba(0,0,0,.30);
+      animation: zoneWarningPulse .65s infinite alternate;
+    }
+
+    @keyframes zoneWarningPulse {
+      from { opacity: .86; transform: translateX(-50%) scale(.98); }
+      to { opacity: 1; transform: translateX(-50%) scale(1.02); }
     }
 
     #copy-indicator {
@@ -379,6 +407,35 @@
       box-shadow: 0 0 38px rgba(255,51,68,.48);
     }
 
+    .warning-logo {
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, #ff3344 0%, #9b0613 72%);
+      color: #fff;
+      font-size: 52px;
+      font-weight: 900;
+      box-shadow: 0 0 34px rgba(255, 51, 68, .85);
+      animation: warningBlink .55s infinite alternate;
+    }
+
+    @keyframes warningBlink {
+      from {
+        transform: scale(.96);
+        filter: brightness(.8);
+        box-shadow: 0 0 18px rgba(255, 51, 68, .55);
+      }
+      to {
+        transform: scale(1.06);
+        filter: brightness(1.55);
+        box-shadow: 0 0 48px rgba(255, 51, 68, 1);
+      }
+    }
+
     .lock-panel h2 {
       margin: 0 0 12px;
       font-size: 23px;
@@ -431,21 +488,19 @@
   <div id="start-screen">
     <div class="panel" id="panel-konten">
       <h1 class="main-title">CIKPUS CYBERLOCK</h1>
-      <div class="sub-title">UJIAN ANTI CURANG !</div>
+      <div class="sub-title">UJIAN TANPA CUARANG</div>
 
       <div class="alert-box">
         <b>PERINGATAN UJIAN:</b><br><br>
-        1. Gunakan 1 HP untuk ujian.<br>
-        2. Login email Google sebelum mulai.<br>
-        3. Isi nama dan kelas dengan benar.<br>
-        4. Kerjakan dan scroll soal hanya di setengah layar kiri.<br>
-        5. Setengah layar kanan adalah zona pengawas transparan, jangan disentuh.<br>
-        6. Jangan buka Google, split screen, screenshot, atau keluar layar.<br>
-        7. Jika melanggar, layar dikunci dan HP bergetar.
+        1. Gunakan 1 smartphone dan login email Google sebelum mulai.<br>
+        2. Isi identitas, jawab soal, dan isi pernyataan tidak menyontek dengan jujur.<br>
+        3. Gunakan hanya bagian kiri layar untuk scroll dan menjawab soal.<br>
+        4. Area kanan layar adalah zona pengawasan tersembunyi; sentuhan pertama diberi peringatan, sentuhan berikutnya dikunci.<br>
+        5. Dilarang membuka Google atau AI, tab/aplikasi lain, split screen, screenshot, atau mode landscape.
       </div>
 
       <div class="info-box">
-        Setelah klik <b>Mulai Ujian</b>, kamera, layar penuh, proteksi layar, dan zona pengawas transparan di setengah kanan layar wajib aktif sampai ujian selesai.
+        Setelah klik <b>Mulai Ujian</b>, kamera, layar penuh, mode potret, dan zona pengawasan kanan akan aktif sampai siswa klik <b>Selesai</b>.
       </div>
 
       <div class="form-group">
@@ -457,16 +512,15 @@
 
       <div class="btn-row">
         <button class="btn-secondary" onclick="bukaLoginGoogle()">Login Email Google Dulu</button>
-        <button class="btn-dark" id="btn-getar" onclick="aktifkanGetarHP()">Aktifkan / Tes Getar HP</button>
         <button class="btn-primary" id="btn-mulai" onclick="inisialisasiAplikasi()" disabled>Memuat Ujian...</button>
       </div>
 
       <div class="checklist" id="checklist-status">
-        Status: Database belum siap • Getar belum dites • Kamera belum aktif
+        Status: Database belum siap • Kamera belum aktif
       </div>
 
       <div class="small-note">
-        Form ujian baru dibuka setelah peserta klik Mulai Ujian dan kamera aktif.
+        Format Spreadsheet: Kolom A Nama Mapel, Kolom B Kode Ujian, Kolom C Link Google Form. Form dibuka setelah kamera aktif.
       </div>
     </div>
   </div>
@@ -476,11 +530,14 @@
       <div class="left" id="exam-code-label">KODE: -</div>
       <div class="center" id="clock-label">Memuat waktu...</div>
       <div class="right">
+        <span id="duration-label">00:00</span>
         <span id="offense-label">AMAN</span>
         <span id="camera-label">KAMERA</span>
         <button id="btn-selesai-ujian" class="btn-finish" onclick="selesaikanUjian()" disabled>Selesai</button>
       </div>
     </div>
+
+    <div id="zone-warning">PERINGATAN: Area kanan adalah zona pengawasan. Gunakan area kiri untuk mengerjakan.</div>
 
     <div id="copy-indicator">Aktivitas terlarang terdeteksi</div>
 
@@ -502,13 +559,14 @@
 
   <div id="lock-overlay">
     <div class="lock-panel">
+      <div class="warning-logo">!</div>
       <h2>🚨 UJIAN DIKUNCI 🚨</h2>
       <p id="lock-reason">Sistem mendeteksi aktivitas mencurigakan.</p>
       <p style="color:#ffb3b3;font-weight:bold;">
         Panggil pengawas. Kunci hanya bisa dibuka dengan kode guru.
       </p>
       <input type="password" id="token-input" class="input-secure" placeholder="KODE GURU" autocomplete="off" />
-      <button class="btn-danger" onclick="bukaKunciUjian()">MATIKAN GETAR & BUKA KUNCI</button>
+      <button class="btn-danger" onclick="bukaKunciUjian()">BUKA KUNCI UJIAN</button>
     </div>
   </div>
 
@@ -519,14 +577,15 @@
     const SPREADSHEET_ID = "15GoVqOmE7EGDcY3yAFFSak425ztbaVuQ_wjZPkH_GRE";
     const SHEET_GID = "0";
     const TOKEN_PENGAWAS = "GURUOTIB";
-
-    // Untuk smartphone Android/Chrome, getar bisa digunakan.
-    // Jika sekolah memakai iPhone atau browser tidak mendukung getar, ubah menjadi false.
-    const WAJIB_GETAR = true;
+    const TOKEN_UJI_COBA = "UJIOTIB"; // kode uji coba, hanya bisa dipakai satu kali per perangkat/browser
 
     // true = pelanggaran langsung kunci.
     // false = pelanggaran pertama hanya peringatan.
     const MODE_KETAT = true;
+
+    // Toleransi zona kanan:
+    // Sentuhan pertama hanya peringatan, sentuhan berikutnya mengunci ujian.
+    const BATAS_PERINGATAN_ZONA_KANAN = 1;
 
     const DATABASE_CACHE_TTL = 10 * 60 * 1000;
     const DATABASE_FETCH_TIMEOUT = 8000;
@@ -564,15 +623,14 @@
     const KEY_BREACH = `${storagePrefix}_breach`;
     const KEY_LOG = `${storagePrefix}_last_log`;
     const KEY_CACHE = `${storagePrefix}_database_cache`;
+    const KEY_TOKEN_UJI_COBA_USED = `${storagePrefix}_token_uji_coba_used`;
 
     let peserta = "";
     let examAktif = false;
     let statusTerkunci = false;
     let linkGoogleForm = "";
+    let namaMapel = "";
     let lokalStream = null;
-
-    let getarSiap = false;
-    let getarInterval = null;
 
     let heartbeatInterval = null;
     let remoteHeartbeatInterval = null;
@@ -580,6 +638,9 @@
     let screenCheckInterval = null;
     let securityCheckInterval = null;
     let clockInterval = null;
+    let durationInterval = null;
+    let orientationCheckInterval = null;
+    let examStartedAt = 0;
 
     let channel = null;
     let sistemSedangUnlock = false;
@@ -601,6 +662,8 @@
     let guardTouchStartTime = 0;
     let guardLongPressTimer = null;
     let zonaKananSudahAktif = false;
+    let jumlahSentuhanZonaKanan = 0;
+    let guardGestureSudahDiproses = false;
 
     // ============================================================
     // LOAD AWAL
@@ -648,12 +711,14 @@
 
       if (cache) {
         const databaseCache = buatDatabaseDariCSV(cache.csvText);
-        const linkCache = databaseCache.get(kodeUjian);
+        const dataCache = databaseCache.get(kodeUjian);
 
-        if (linkCache) {
-          linkGoogleForm = ubahKeEmbedGoogleForm(linkCache);
+        if (dataCache && dataCache.link) {
+          namaMapel = dataCache.namaMapel || kodeUjian.toUpperCase();
+          linkGoogleForm = ubahKeEmbedGoogleForm(dataCache.link);
           databaseSiap = true;
-          aktifkanTombolMulai("Ujian siap. Data terakhir digunakan agar lebih cepat.");
+          aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Data terakhir digunakan agar lebih cepat.`);
+          tampilkanNamaMapel();
           fetchDatabaseTerbaru(false);
           return;
         }
@@ -691,13 +756,13 @@
         simpanCacheDatabase(csvText);
 
         const database = buatDatabaseDariCSV(csvText);
-        const link = database.get(kodeUjian);
+        const dataUjian = database.get(kodeUjian);
 
-        if (!link) {
+        if (!dataUjian || !dataUjian.link) {
           if (tampilkanErrorJikaGagal) {
             tampilkanError(
               "KODE TIDAK DITEMUKAN",
-              `Kode "${kodeUjian}" tidak ada di Spreadsheet. Pastikan kolom A berisi kode dan kolom B berisi link Google Form.`
+              `Kode "${kodeUjian}" tidak ada di Spreadsheet. Pastikan kolom A berisi Nama Mata Pelajaran, kolom B berisi Kode Ujian, dan kolom C berisi Link Google Form.`
             );
           }
           return;
@@ -705,18 +770,20 @@
 
         linkGoogleForm = ubahKeEmbedGoogleForm(link);
         databaseSiap = true;
-        aktifkanTombolMulai("Ujian siap. Login email Google dulu, tes getar, lalu klik Mulai Ujian.");
+        aktifkanTombolMulai("Ujian siap. Login email Google dulu, tes kunci, lalu klik Mulai Ujian.");
       } catch (error) {
         const cache = ambilCacheDatabase(true);
 
         if (cache) {
           const databaseCache = buatDatabaseDariCSV(cache.csvText);
-          const linkCache = databaseCache.get(kodeUjian);
+          const dataCache = databaseCache.get(kodeUjian);
 
-          if (linkCache) {
-            linkGoogleForm = ubahKeEmbedGoogleForm(linkCache);
+          if (dataCache && dataCache.link) {
+            namaMapel = dataCache.namaMapel || kodeUjian.toUpperCase();
+            linkGoogleForm = ubahKeEmbedGoogleForm(dataCache.link);
             databaseSiap = true;
-            aktifkanTombolMulai("Ujian siap memakai data terakhir karena koneksi database lambat.");
+            tampilkanNamaMapel();
+            aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Memakai data terakhir karena koneksi database lambat.`);
             return;
           }
         }
@@ -765,11 +832,6 @@
         return;
       }
 
-      if (WAJIB_GETAR && !getarSiap) {
-        alert("Aktifkan / Tes Getar HP terlebih dahulu sebelum mulai ujian.");
-        return;
-      }
-
       const sesiAktif = bacaSesiAktif();
       if (sesiAktif && sesiAktif.tabId !== tabId && sesiMasihHidup(sesiAktif)) {
         localStorage.setItem(KEY_BREACH, "true");
@@ -794,6 +856,8 @@
       examAktif = true;
       statusTerkunci = false;
       jumlahPelanggaran = 0;
+      jumlahSentuhanZonaKanan = 0;
+      examStartedAt = Date.now();
 
       document.body.classList.add("exam-mode");
       document.getElementById("start-screen").style.display = "none";
@@ -804,6 +868,8 @@
       mulaiCekKamera();
       mulaiCekLayar();
       mulaiProteksiSmartphone();
+      mulaiDurasiUjian();
+      mulaiCekOrientasiPotret();
       aktifkanZonaKananPengawas();
       perbaruiWatermark();
       siapkanDeteksiSubmitForm();
@@ -824,54 +890,24 @@
 
     function masukFullscreen() {
       const elem = document.documentElement;
-      if (elem.requestFullscreen) elem.requestFullscreen().catch(() => {});
-      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-    }
 
-    // ============================================================
-    // GETAR
-    // ============================================================
-    function aktifkanGetarHP() {
-      if (!("vibrate" in navigator)) {
-        getarSiap = false;
-        updateChecklist();
-        alert("Perangkat atau browser ini tidak mendukung getar. Gunakan HP Android dengan Chrome, atau minta arahan pengawas.");
-        return;
-      }
-
-      const hasil = navigator.vibrate([250, 120, 250]);
-
-      if (hasil) {
-        getarSiap = true;
-        document.getElementById("btn-getar").innerText = "Getar HP Aktif";
-        ubahStatus("Getar HP aktif. Silakan klik Mulai Ujian.");
-        updateChecklist();
-        alert("Jika HP bergetar, fitur getar sudah aktif.");
-      } else {
-        getarSiap = false;
-        updateChecklist();
-        alert("Getar belum aktif. Pastikan memakai HP yang mendukung getar.");
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen()
+          .then(() => kunciOrientasiPotret())
+          .catch(() => {});
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+        setTimeout(kunciOrientasiPotret, 500);
       }
     }
 
-    function jalankanGetar() {
-      if (!("vibrate" in navigator)) return;
-
-      navigator.vibrate([700, 250, 700, 250, 1200]);
-
-      if (getarInterval) clearInterval(getarInterval);
-
-      getarInterval = setInterval(() => {
-        if (!statusTerkunci) return;
-        navigator.vibrate([700, 250, 700, 250, 1200]);
-      }, 4000);
+    function kunciOrientasiPotret() {
+      try {
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock("portrait-primary").catch(() => {});
+        }
+      } catch (e) {}
     }
-
-    function matikanGetar() {
-      if (getarInterval) {
-        clearInterval(getarInterval);
-        getarInterval = null;
-      }
 
       if ("vibrate" in navigator) {
         navigator.vibrate(0);
@@ -929,26 +965,30 @@
       const btnSelesai = document.getElementById("btn-selesai-ujian");
 
       formLoadCount = 0;
-      tombolSelesaiAktif = false;
-      btnSelesai.style.display = "none";
-      btnSelesai.disabled = true;
+      tombolSelesaiAktif = true;
+      btnSelesai.style.display = "inline-block";
+      btnSelesai.disabled = false;
+      btnSelesai.innerText = "Selesai";
 
+      /*
+        Google Form Bapak memiliki 3 bagian:
+        1. Identitas
+        2. Soal pilihan
+        3. Pernyataan tidak menyontek
+
+        Tombol "Berikutnya" antarbagian bisa memuat ulang iframe.
+        Sistem tidak menjadikan reload iframe sebagai tanda selesai.
+        Proteksi tetap aktif sampai siswa sendiri klik tombol Selesai di bar atas.
+      */
       iframe.onload = function() {
         if (!examAktif || statusTerkunci) return;
-
         formLoadCount++;
-
-        // Load pertama = form tampil.
-        // Load kedua biasanya setelah siswa klik Kirim dan halaman konfirmasi Form tampil.
-        if (formLoadCount >= 2) {
-          aktifkanTombolSelesai();
-        }
       };
     }
 
     function aktifkanTombolSelesai() {
-      tombolSelesaiAktif = true;
       const btnSelesai = document.getElementById("btn-selesai-ujian");
+      tombolSelesaiAktif = true;
       btnSelesai.style.display = "inline-block";
       btnSelesai.disabled = false;
       btnSelesai.innerText = "Selesai";
@@ -960,7 +1000,8 @@
         return;
       }
 
-      const yakin = confirm("Pastikan jawaban sudah terkirim. Akhiri ujian sekarang?");
+      const durasi = formatDurasi(Date.now() - examStartedAt);
+      const yakin = confirm(`Pastikan jawaban sudah terkirim. Durasi pengerjaan: ${durasi}. Akhiri ujian sekarang?`);
       if (!yakin) return;
 
       akhiriSesiUjian();
@@ -979,11 +1020,12 @@
       if (cameraCheckInterval) clearInterval(cameraCheckInterval);
       if (screenCheckInterval) clearInterval(screenCheckInterval);
       if (securityCheckInterval) clearInterval(securityCheckInterval);
+      if (durationInterval) clearInterval(durationInterval);
+      if (orientationCheckInterval) clearInterval(orientationCheckInterval);
       if (fokusHilangTimer) clearTimeout(fokusHilangTimer);
       if (longPressTimer) clearTimeout(longPressTimer);
       if (guardLongPressTimer) clearTimeout(guardLongPressTimer);
 
-      matikanGetar();
       tutupSessionServerOpsional();
 
       if (lokalStream) {
@@ -1002,7 +1044,7 @@
         <h1 class="main-title">UJIAN SELESAI</h1>
         <div class="sub-title">SMKN 1 CIKARANG PUSAT</div>
         <div class="info-box" style="text-align:center;">
-          Jawaban sudah dikirim. Silakan panggil pengawas atau tutup halaman ini sesuai arahan guru.
+          Jawaban sudah dikirim.<br><br><b>Durasi pengerjaan: ${formatDurasi(Date.now() - examStartedAt)}</b><br><br>Silakan panggil pengawas atau tutup halaman ini sesuai arahan guru.
         </div>
       `;
 
@@ -1033,15 +1075,16 @@
         guardTouchStartX = touch.clientX;
         guardTouchStartY = touch.clientY;
         guardTouchStartTime = Date.now();
+        guardGestureSudahDiproses = false;
 
         clearTimeout(guardLongPressTimer);
 
         guardLongPressTimer = setTimeout(() => {
-          if (!examAktif || statusTerkunci) return;
+          if (!examAktif || statusTerkunci || guardGestureSudahDiproses) return;
 
-          tampilIndikator("Tekan lama area kanan terdeteksi");
-          prosesPelanggaran("Tekan lama di setengah layar kanan terdeteksi. Area kanan adalah zona pengawas transparan.");
-        }, 450);
+          guardGestureSudahDiproses = true;
+          prosesZonaKananDenganToleransi("Tekan lama di zona kanan terdeteksi.");
+        }, 650);
       }, { passive: false });
 
       guard.addEventListener("touchmove", function(event) {
@@ -1059,9 +1102,9 @@
           guardLongPressTimer = null;
         }
 
-        if (geserX > 12 || geserY > 12) {
-          tampilIndikator("Gerakan di area kanan terdeteksi");
-          prosesPelanggaran("Gerakan di setengah layar kanan terdeteksi. Saat ujian hanya boleh scroll soal di area kiri.");
+        if (!guardGestureSudahDiproses && (geserX > 16 || geserY > 16)) {
+          guardGestureSudahDiproses = true;
+          prosesZonaKananDenganToleransi("Gerakan di zona kanan terdeteksi. Saat ujian hanya boleh scroll soal di area kiri.");
         }
       }, { passive: false });
 
@@ -1076,8 +1119,14 @@
           guardLongPressTimer = null;
         }
 
-        tampilIndikator("Sentuhan area kanan terdeteksi");
-        prosesPelanggaran("Sentuhan di setengah layar kanan terdeteksi. Area kanan adalah zona pengawas transparan.");
+        const lamaSentuh = Date.now() - guardTouchStartTime;
+
+        // Sentuhan pendek tanpa gerakan dianggap bisa saja tidak sengaja.
+        // Karena itu masuk toleransi peringatan pertama, bukan langsung lock.
+        if (!guardGestureSudahDiproses && lamaSentuh >= 40) {
+          guardGestureSudahDiproses = true;
+          prosesZonaKananDenganToleransi("Sentuhan di zona kanan terdeteksi.");
+        }
       }, { passive: false });
 
       guard.addEventListener("mousedown", function(event) {
@@ -1086,19 +1135,49 @@
         event.preventDefault();
         event.stopPropagation();
 
-        tampilIndikator("Klik area kanan terdeteksi");
-        prosesPelanggaran("Klik di setengah layar kanan terdeteksi. Area kanan adalah zona pengawas transparan.");
+        prosesZonaKananDenganToleransi("Klik di zona kanan terdeteksi.");
       });
 
       guard.addEventListener("contextmenu", function(event) {
         event.preventDefault();
 
         if (examAktif && !statusTerkunci) {
-          tampilIndikator("Klik kanan area kanan terdeteksi");
-          prosesPelanggaran("Klik kanan / tekan lama di area kanan terdeteksi.");
+          prosesZonaKananDenganToleransi("Klik kanan / tekan lama di zona kanan terdeteksi.");
         }
       });
     }
+
+    function prosesZonaKananDenganToleransi(alasan) {
+      if (!examAktif || statusTerkunci) return;
+
+      jumlahSentuhanZonaKanan++;
+
+      if (jumlahSentuhanZonaKanan <= BATAS_PERINGATAN_ZONA_KANAN) {
+        tampilPeringatanZonaKanan(
+          "PERINGATAN 1: Area kanan adalah zona pengawasan. Gunakan area kiri untuk scroll dan menjawab soal. Jika terulang, ujian akan dikunci."
+        );
+
+        document.getElementById("offense-label").innerText = `ZONA: ${jumlahSentuhanZonaKanan}`;
+        masukFullscreen();
+        return;
+      }
+
+      tampilIndikator("Zona kanan disentuh kembali");
+      prosesPelanggaran(`${alasan} Peringatan zona kanan sudah diberikan sebelumnya.`);
+    }
+
+    function tampilPeringatanZonaKanan(teks) {
+      const warning = document.getElementById("zone-warning");
+      if (!warning) return;
+
+      warning.innerText = teks;
+      warning.style.display = "block";
+
+      setTimeout(() => {
+        warning.style.display = "none";
+      }, 4500);
+    }
+
 
     // ============================================================
     // PROTEKSI SMARTPHONE: TAB, POPUP, SPLIT SCREEN, GOOGLE SEARCH
@@ -1139,6 +1218,8 @@
       simpanUkuranAwalProteksi();
 
       if (securityCheckInterval) clearInterval(securityCheckInterval);
+      if (durationInterval) clearInterval(durationInterval);
+      if (orientationCheckInterval) clearInterval(orientationCheckInterval);
 
       securityCheckInterval = setInterval(() => {
         cekKeamananLayar("Pemeriksaan berkala");
@@ -1434,23 +1515,36 @@
       }
 
       document.getElementById("camera-label").innerText = "TERKUNCI";
-      jalankanGetar();
       updateSessionServerOpsional("locked", alasan);
     }
 
     function bukaKunciUjian() {
       const token = document.getElementById("token-input").value.trim();
 
-      if (token !== TOKEN_PENGAWAS) {
-        alert("Kode guru salah.");
+      if (token === TOKEN_PENGAWAS) {
+        bukaKunciDenganTokenValid();
         return;
       }
 
+      if (token === TOKEN_UJI_COBA) {
+        if (localStorage.getItem(KEY_TOKEN_UJI_COBA_USED) === "true") {
+          alert("Kode uji coba sudah pernah digunakan di perangkat/browser ini.");
+          return;
+        }
+
+        localStorage.setItem(KEY_TOKEN_UJI_COBA_USED, "true");
+        bukaKunciDenganTokenValid();
+        return;
+      }
+
+      alert("Kode guru salah.");
+    }
+
+    function bukaKunciDenganTokenValid() {
       sistemSedangUnlock = true;
       statusTerkunci = false;
       localStorage.removeItem(KEY_BREACH);
 
-      matikanGetar();
       document.body.classList.remove("secure-blur");
       document.getElementById("lock-overlay").style.display = "none";
       document.getElementById("token-input").value = "";
@@ -1737,13 +1831,57 @@
 
     function buatDatabaseDariCSV(csvText) {
       const database = new Map();
-      const baris = csvText.split(/\r?\n/).filter(row => row.trim() !== "");
+      const baris = csvText.split(/
+?
+/).filter(row => row.trim() !== "");
 
       for (const row of baris) {
         const kolom = parseCSVLine(row);
-        const key = (kolom[0] || "").trim().toLowerCase();
-        const value = (kolom[1] || "").trim();
-        if (key && value) database.set(key, value);
+
+        const kolomA = (kolom[0] || "").trim();
+        const kolomB = (kolom[1] || "").trim();
+        const kolomC = (kolom[2] || "").trim();
+
+        // Format baru:
+        // Kolom A = Nama Mata Pelajaran
+        // Kolom B = Kode Ujian
+        // Kolom C = Link Google Form
+        let nama = kolomA;
+        let kode = kolomB;
+        let link = kolomC;
+
+        // Lewati header spreadsheet
+        const headerA = kolomA.toLowerCase();
+        const headerB = kolomB.toLowerCase();
+        const headerC = kolomC.toLowerCase();
+
+        if (
+          headerA.includes("nama") ||
+          headerA.includes("mata pelajaran") ||
+          headerB.includes("kode") ||
+          headerC.includes("link")
+        ) {
+          continue;
+        }
+
+        // Kompatibilitas format lama:
+        // Kolom A = Kode Ujian
+        // Kolom B = Link Google Form
+        if (!link && kolomB.includes("docs.google.com/forms")) {
+          nama = kolomA;
+          kode = kolomA;
+          link = kolomB;
+        }
+
+        const key = (kode || "").trim().toLowerCase();
+
+        if (key && link) {
+          database.set(key, {
+            namaMapel: nama || key.toUpperCase(),
+            kode: key,
+            link: link
+          });
+        }
       }
 
       return database;
@@ -1794,6 +1932,13 @@
     // ============================================================
     // UI
     // ============================================================
+    function tampilkanNamaMapel() {
+      const label = document.getElementById("exam-code-label");
+      if (label && namaMapel) {
+        label.innerText = namaMapel.toUpperCase();
+      }
+    }
+
     function ubahStatus(teks) {
       const el = document.getElementById("status-text");
       if (el) el.innerText = teks;
@@ -1804,10 +1949,9 @@
       if (!el) return;
 
       const db = databaseSiap ? "Database siap" : "Database belum siap";
-      const getar = getarSiap ? "Getar aktif" : "Getar belum dites";
       const kamera = lokalStream ? "Kamera aktif" : "Kamera belum aktif";
 
-      el.innerText = `Status: ${db} • ${getar} • ${kamera}`;
+      el.innerText = `Status: ${db} • ${kamera}`;
     }
 
     function tampilkanError(judul, deskripsi) {
