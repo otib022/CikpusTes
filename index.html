@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Cikpus CyberLock</title>
+  <link rel="preconnect" href="https://docs.google.com">
+  <link rel="preconnect" href="https://accounts.google.com">
+  <link rel="dns-prefetch" href="https://docs.google.com">
+  <link rel="dns-prefetch" href="https://accounts.google.com">
 
   <style>
     * { box-sizing: border-box; }
@@ -75,11 +79,27 @@
 
     .sub-title {
       margin-top: 6px;
-      margin-bottom: 14px;
+      margin-bottom: 8px;
       font-size: 12px;
       font-weight: bold;
       letter-spacing: 1px;
       color: #00d2ff;
+    }
+
+    .anti-cheat-title {
+      margin: 0 0 14px;
+      color: #ff3344;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+      text-shadow: 0 0 12px rgba(255,51,68,.55);
+      animation: antiCheatPulse .9s infinite alternate;
+    }
+
+    @keyframes antiCheatPulse {
+      from { opacity: .78; transform: scale(.99); }
+      to { opacity: 1; transform: scale(1.02); }
     }
 
     .alert-box {
@@ -507,8 +527,8 @@
   <div id="start-screen">
     <div class="panel" id="panel-konten">
       <h1 class="main-title">CIKPUS CYBERLOCK</h1>
+      <div class="anti-cheat-title">Ujian Anti Curang !</div>
       <div class="sub-title">SMARTPHONE SECURE MODE - GOOGLE FORM</div>
-      <div class="sub-title">UJIAN ANTI CURANG !</div>
 
       <div class="alert-box">
         <b>PERINGATAN UJIAN:</b><br><br>
@@ -540,7 +560,7 @@
       </div>
 
       <div class="small-note">
-        Format Spreadsheet: Kolom A Nama Mapel, Kolom B Kode Ujian, Kolom C Link Google Form. Pastikan sudah Publish to Web.
+        Prestasi itu BAIK, tapi JUJUR Jauh LEBIH BAIK !
       </div>
     </div>
   </div>
@@ -624,8 +644,8 @@
       */
     ];
 
-    const DATABASE_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 jam // 24 jam
-    const DATABASE_FETCH_TIMEOUT = 6000; // 6 detik // 4,5 detik supaya tidak menggantung lama
+    const DATABASE_CACHE_TTL = 60 * 60 * 1000; // 1 jam, cukup cepat tetapi tetap cukup akurat // 6 jam // 24 jam
+    const DATABASE_FETCH_TIMEOUT = 5000; // 5 detik agar tidak mengganggu siswa // 6 detik // 4,5 detik supaya tidak menggantung lama
 
     const SESSION_API_URL = "";
 
@@ -653,6 +673,7 @@
     const KEY_BREACH = `${storagePrefix}_breach`;
     const KEY_LOG = `${storagePrefix}_last_log`;
     const KEY_CACHE = `${storagePrefix}_database_cache`;
+    const KEY_CACHE_GLOBAL = `cyberlock_global_database_cache_${SPREADSHEET_ID}_${SHEET_GID}`;
     const KEY_TOKEN_UJI_COBA_USED = `${storagePrefix}_token_uji_coba_used`;
 
     let peserta = "";
@@ -747,13 +768,13 @@
 
         if (dataCache && dataCache.link) {
           setDataUjian(dataCache, "cache");
-          aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Data cache digunakan agar lebih cepat.`);
+          aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Data cache global digunakan agar lebih cepat.`);
           fetchDatabaseTerbaru(false);
           return;
         }
       }
 
-      ubahStatus("Menghubungkan ke Google Spreadsheet...");
+      ubahStatus("Menghubungkan ke Google Spreadsheet... Jika pernah dibuka, cache akan dipakai otomatis.");
       await fetchDatabaseTerbaru(true);
     }
 
@@ -777,10 +798,11 @@
 
     async function fetchDatabaseTerbaru(tampilkanErrorJikaGagal = true) {
       try {
+        const cacheBuster = `v=${Date.now()}`;
         const daftarURL = [
-          `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`,
-          `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/pub?output=csv&gid=${SHEET_GID}`,
-          `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/pub?gid=${SHEET_GID}&single=true&output=csv`
+          `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/pub?gid=${SHEET_GID}&single=true&output=csv&${cacheBuster}`,
+          `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/pub?output=csv&gid=${SHEET_GID}&${cacheBuster}`,
+          `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}&${cacheBuster}`
         ];
 
         const csvText = await ambilCSVTercepat(daftarURL);
@@ -851,13 +873,15 @@
           }
         }, DATABASE_FETCH_TIMEOUT);
 
-        daftarURL.forEach(url => {
+        daftarURL.forEach((url, index) => {
           const controller = new AbortController();
           controllers.push(controller);
 
           fetch(url, {
             method: "GET",
-            cache: "force-cache",
+            // no-store dipakai agar data Spreadsheet lebih akurat,
+            // sedangkan kecepatan tetap dibantu oleh localStorage/sessionStorage cache.
+            cache: "no-store",
             signal: controller.signal
           })
           .then(response => {
@@ -866,12 +890,21 @@
           })
           .then(text => {
             if (selesai) return;
-            if (!text || !text.includes(",")) throw new Error("CSV tidak valid.");
+
+            const isi = String(text || "").trim();
+            if (!isi || !isi.includes(",")) {
+              throw new Error("CSV tidak valid.");
+            }
+
+            const databaseTest = buatDatabaseDariCSV(isi);
+            if (!databaseTest.size) {
+              throw new Error("CSV tidak berisi data ujian.");
+            }
 
             selesai = true;
             clearTimeout(timeoutGlobal);
             controllers.forEach(c => c.abort());
-            resolve(text);
+            resolve(isi);
           })
           .catch(() => {
             gagal++;
@@ -1857,24 +1890,59 @@
 
     function simpanCacheDatabase(csvText) {
       try {
-        const data = { savedAt: Date.now(), csvText };
-        localStorage.setItem(KEY_CACHE, JSON.stringify(data));
+        const data = {
+          savedAt: Date.now(),
+          spreadsheetId: SPREADSHEET_ID,
+          gid: SHEET_GID,
+          csvText
+        };
+
+        const json = JSON.stringify(data);
+
+        // Cache global membuat ujian mapel ke-2 dan ke-3 langsung cepat
+        // walaupun kode ujiannya berbeda.
+        localStorage.setItem(KEY_CACHE_GLOBAL, json);
+
+        // Cache per kode tetap disimpan sebagai cadangan.
+        localStorage.setItem(KEY_CACHE, json);
+
+        // Session cache paling cepat selama tab masih hidup.
+        sessionStorage.setItem(KEY_CACHE_GLOBAL, json);
       } catch (e) {}
     }
 
     function ambilCacheDatabase(abaikanMasaBerlaku = false) {
+      const daftarKey = [KEY_CACHE_GLOBAL, KEY_CACHE];
+
       try {
-        const raw = localStorage.getItem(KEY_CACHE);
-        if (!raw) return null;
+        const sessionRaw = sessionStorage.getItem(KEY_CACHE_GLOBAL);
+        if (sessionRaw) {
+          const sessionData = JSON.parse(sessionRaw);
+          if (cacheMasihValid(sessionData, abaikanMasaBerlaku)) return sessionData;
+        }
+      } catch (e) {}
 
-        const data = JSON.parse(raw);
-        if (!data || !data.csvText) return null;
+      for (const key of daftarKey) {
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) continue;
 
-        const umurCache = Date.now() - data.savedAt;
-        if (!abaikanMasaBerlaku && umurCache > DATABASE_CACHE_TTL) return null;
+          const data = JSON.parse(raw);
+          if (cacheMasihValid(data, abaikanMasaBerlaku)) return data;
+        } catch (e) {}
+      }
 
-        return data;
-      } catch (e) {
+      return null;
+    }
+
+    function cacheMasihValid(data, abaikanMasaBerlaku = false) {
+      if (!data || !data.csvText || !data.savedAt) return false;
+
+      const umurCache = Date.now() - data.savedAt;
+      if (!abaikanMasaBerlaku && umurCache > DATABASE_CACHE_TTL) return false;
+
+      return true;
+    } catch (e) {
         return null;
       }
     }
