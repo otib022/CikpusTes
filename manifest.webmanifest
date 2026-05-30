@@ -1,0 +1,11 @@
+{
+  "name": "Cikpus CyberLock Ujian",
+  "short_name": "CyberLock",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#06101f",
+  "theme_color": "#06101f",
+  "description": "Sistem ujian anti curang berbasis Google Form dan Spreadsheet."
+}
