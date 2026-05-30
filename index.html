@@ -9,6 +9,7 @@
     * { box-sizing: border-box; }
 
     :root {
+      /* UBAH UKURAN ZONA KANAN DI SINI */
       --zona-kanan: 60vw;
     }
 
@@ -166,6 +167,27 @@
     .btn-danger { color: white; background: #ff3344; }
     .btn-dark { color: white; background: #1f2a44; }
 
+    .btn-link-google {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .3px;
+      cursor: pointer;
+      text-transform: uppercase;
+      text-decoration: none;
+      text-align: center;
+      color: white;
+      background: #1463ff;
+    }
+
+    .btn-link-google:active {
+      transform: scale(.99);
+    }
+
     .checklist {
       text-align: left;
       color: #dffaff;
@@ -220,9 +242,7 @@
       text-overflow: ellipsis;
     }
 
-    #topbar .left {
-      max-width: 22%;
-    }
+    #topbar .left { max-width: 26%; }
 
     #topbar .center {
       color: white;
@@ -235,7 +255,7 @@
       align-items: center;
       justify-content: flex-end;
       gap: 5px;
-      max-width: 38%;
+      max-width: 42%;
     }
 
     .btn-finish {
@@ -269,6 +289,35 @@
       touch-action: pan-y;
     }
 
+    #right-touch-guard {
+      position: fixed;
+      top: 50px;
+      right: 0;
+      bottom: 0;
+      width: var(--zona-kanan);
+      min-width: var(--zona-kanan);
+      max-width: var(--zona-kanan);
+      z-index: 946;
+      background: rgba(255, 0, 0, 0.004);
+      pointer-events: auto;
+      touch-action: none;
+    }
+
+    #right-touch-guard::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(255, 0, 0, 0.10);
+    }
+
+    #right-touch-guard::after {
+      content: "";
+      display: none;
+    }
+
     #camera-monitor {
       position: fixed;
       right: 10px;
@@ -298,36 +347,6 @@
       transform: rotate(-22deg);
       white-space: pre-wrap;
       text-align: center;
-    }
-
-
-    #right-touch-guard {
-      position: fixed;
-      top: 50px;
-      right: 0;
-      bottom: 0;
-      width: var(--zona-kanan);
-      min-width: var(--zona-kanan);
-      max-width: var(--zona-kanan);
-      z-index: 946;
-      background: rgba(255, 0, 0, 0.004);
-      pointer-events: auto;
-      touch-action: none;
-    }
-
-    #right-touch-guard::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      background: rgba(255, 0, 0, 0.10);
-    }
-
-    #right-touch-guard::after {
-      content: "";
-      display: none;
     }
 
     #zone-warning {
@@ -488,7 +507,7 @@
   <div id="start-screen">
     <div class="panel" id="panel-konten">
       <h1 class="main-title">CIKPUS CYBERLOCK</h1>
-      <div class="sub-title">UJIAN TANPA CUARANG</div>
+      <div class="sub-title">SMARTPHONE SECURE MODE - GOOGLE FORM</div>
 
       <div class="alert-box">
         <b>PERINGATAN UJIAN:</b><br><br>
@@ -496,7 +515,7 @@
         2. Isi identitas, jawab soal, dan isi pernyataan tidak menyontek dengan jujur.<br>
         3. Gunakan hanya bagian kiri layar untuk scroll dan menjawab soal.<br>
         4. Area kanan layar adalah zona pengawasan tersembunyi; sentuhan pertama diberi peringatan, sentuhan berikutnya dikunci.<br>
-        5. Dilarang membuka Google atau AI, tab/aplikasi lain, split screen, screenshot, atau mode landscape.
+        5. Dilarang membuka Google, tab/aplikasi lain, split screen, screenshot, atau mode landscape.
       </div>
 
       <div class="info-box">
@@ -508,10 +527,10 @@
         <input id="peserta-input" class="form-control" type="text" placeholder="Contoh: Ahmad Fauzi - XII TKRO 1" autocomplete="off" />
       </div>
 
-      <div class="status-text" id="status-text">Menghubungkan ke database ujian...</div>
+      <div class="status-text" id="status-text">Menghubungkan ke Google Spreadsheet...</div>
 
       <div class="btn-row">
-        <button class="btn-secondary" onclick="bukaLoginGoogle()">Login Email Google Dulu</button>
+        <a class="btn-link-google" href="https://accounts.google.com/" target="_blank" rel="noopener noreferrer">Login Email Google Dulu</a>
         <button class="btn-primary" id="btn-mulai" onclick="inisialisasiAplikasi()" disabled>Memuat Ujian...</button>
       </div>
 
@@ -520,7 +539,7 @@
       </div>
 
       <div class="small-note">
-        Format Spreadsheet: Kolom A Nama Mapel, Kolom B Kode Ujian, Kolom C Link Google Form. Form dibuka setelah kamera aktif.
+        Format Spreadsheet: Kolom A Nama Mapel, Kolom B Kode Ujian, Kolom C Link Google Form. Pastikan sudah Publish to Web.
       </div>
     </div>
   </div>
@@ -538,7 +557,6 @@
     </div>
 
     <div id="zone-warning">PERINGATAN: Area kanan adalah zona pengawasan. Gunakan area kiri untuk mengerjakan.</div>
-
     <div id="copy-indicator">Aktivitas terlarang terdeteksi</div>
 
     <div id="exam-area">
@@ -577,20 +595,37 @@
     const SPREADSHEET_ID = "15GoVqOmE7EGDcY3yAFFSak425ztbaVuQ_wjZPkH_GRE";
     const SHEET_GID = "0";
     const TOKEN_PENGAWAS = "GURUOTIB";
-    const TOKEN_UJI_COBA = "UJIOTIB"; // kode uji coba, hanya bisa dipakai satu kali per perangkat/browser
+    const TOKEN_UJI_COBA = "UJIOTIB";
 
-    // true = pelanggaran langsung kunci.
-    // false = pelanggaran pertama hanya peringatan.
     const MODE_KETAT = true;
-
-    // Toleransi zona kanan:
-    // Sentuhan pertama hanya peringatan, sentuhan berikutnya mengunci ujian.
     const BATAS_PERINGATAN_ZONA_KANAN = 1;
 
-    const DATABASE_CACHE_TTL = 10 * 60 * 1000;
-    const DATABASE_FETCH_TIMEOUT = 8000;
+    // Database tetap memakai Google Spreadsheet.
+    // Sistem dibuat cache-first agar lebih cepat:
+    // 1. Pakai cache browser lebih dulu jika ada.
+    // 2. Refresh data Spreadsheet di belakang layar.
+    // 3. Jika belum ada cache, ambil dari Spreadsheet dengan jalur paralel.
+    const GUNAKAN_DATABASE_LOKAL = false;
 
-    // Jika nanti ingin deteksi lintas perangkat, isi dengan endpoint Apps Script/Firebase/Supabase.
+    const DATABASE_LOKAL = [
+      /*
+      Contoh agar pembukaan ujian super cepat tanpa menunggu Spreadsheet:
+      {
+        namaMapel: "Informatika",
+        kode: "INFO",
+        link: "https://docs.google.com/forms/d/e/xxxxxxxx/viewform"
+      },
+      {
+        namaMapel: "Matematika",
+        kode: "MTK",
+        link: "https://docs.google.com/forms/d/e/yyyyyyyy/viewform"
+      }
+      */
+    ];
+
+    const DATABASE_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 jam // 24 jam
+    const DATABASE_FETCH_TIMEOUT = 6000; // 6 detik // 4,5 detik supaya tidak menggantung lama
+
     const SESSION_API_URL = "";
 
     // ============================================================
@@ -598,18 +633,12 @@
     // ============================================================
     const urlParams = new URLSearchParams(window.location.search);
 
-    // Mendukung berbagai variasi parameter:
-    // ?id=Info, ?ID=INFO, ?Id=info, ?kode=Info, ?KODE=INFO
     function ambilKodeUjianDariURL() {
       const daftarNamaParameter = ["id", "ID", "Id", "iD", "kode", "KODE", "Kode"];
-
       for (const nama of daftarNamaParameter) {
         const nilai = urlParams.get(nama);
-        if (nilai && nilai.trim() !== "") {
-          return nilai.trim().toLowerCase();
-        }
+        if (nilai && nilai.trim() !== "") return nilai.trim().toLowerCase();
       }
-
       return "";
     }
 
@@ -674,7 +703,7 @@
       updateChecklist();
 
       if (!kodeUjian) {
-        tampilkanError("LINK SALAH", "Tambahkan kode ujian di URL. Contoh: ?id=Info atau ?ID=INFO");
+        tampilkanError("LINK SALAH", "Tambahkan kode ujian di URL. Contoh: ?id=INFO atau ?ID=INFO");
         return;
       }
 
@@ -687,15 +716,8 @@
 
       const sesiAktif = bacaSesiAktif();
       if (sesiAktif && sesiAktif.tabId !== tabId && sesiMasihHidup(sesiAktif)) {
-        tampilkanError(
-          "TAB GANDA TERDETEKSI",
-          "Ujian sudah aktif di tab lain. Tutup tab ini dan kembali ke tab pertama."
-        );
-        kirimPesanTab({
-          type: "DUPLICATE_TAB",
-          from: tabId,
-          reason: "Peserta membuka link ujian di tab lain."
-        });
+        tampilkanError("TAB GANDA TERDETEKSI", "Ujian sudah aktif di tab lain. Tutup tab ini dan kembali ke tab pertama.");
+        kirimPesanTab({ type: "DUPLICATE_TAB", from: tabId, reason: "Peserta membuka link ujian di tab lain." });
         localStorage.setItem(KEY_BREACH, "true");
         return;
       }
@@ -704,9 +726,17 @@
     });
 
     // ============================================================
-    // DATABASE SPREADSHEET CEPAT + CACHE
+    // DATABASE CEPAT
     // ============================================================
     async function loadDatabaseUjian() {
+      const dataLokal = ambilDariDatabaseLokal();
+
+      if (dataLokal) {
+        setDataUjian(dataLokal, "database lokal");
+        aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Data lokal digunakan, lebih cepat.`);
+        return;
+      }
+
       const cache = ambilCacheDatabase();
 
       if (cache) {
@@ -714,44 +744,48 @@
         const dataCache = databaseCache.get(kodeUjian);
 
         if (dataCache && dataCache.link) {
-          namaMapel = dataCache.namaMapel || kodeUjian.toUpperCase();
-          linkGoogleForm = ubahKeEmbedGoogleForm(dataCache.link);
-          databaseSiap = true;
-          aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Data terakhir digunakan agar lebih cepat.`);
-          tampilkanNamaMapel();
+          setDataUjian(dataCache, "cache");
+          aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Data cache digunakan agar lebih cepat.`);
           fetchDatabaseTerbaru(false);
           return;
         }
       }
 
-      ubahStatus("Menghubungkan ke database ujian...");
+      ubahStatus("Menghubungkan ke Google Spreadsheet...");
       await fetchDatabaseTerbaru(true);
+    }
+
+    function ambilDariDatabaseLokal() {
+      if (!GUNAKAN_DATABASE_LOKAL || !Array.isArray(DATABASE_LOKAL) || DATABASE_LOKAL.length === 0) {
+        return null;
+      }
+
+      const item = DATABASE_LOKAL.find(row => {
+        return String(row.kode || "").trim().toLowerCase() === kodeUjian;
+      });
+
+      if (!item || !item.link) return null;
+
+      return {
+        namaMapel: item.namaMapel || item.nama || kodeUjian.toUpperCase(),
+        kode: kodeUjian,
+        link: item.link
+      };
     }
 
     async function fetchDatabaseTerbaru(tampilkanErrorJikaGagal = true) {
       try {
         const daftarURL = [
           `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`,
-          `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/pub?output=csv&gid=${SHEET_GID}`
+          `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/pub?output=csv&gid=${SHEET_GID}`,
+          `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/pub?gid=${SHEET_GID}&single=true&output=csv`
         ];
 
-        let csvText = "";
-        let berhasil = false;
+        const csvText = await ambilCSVTercepat(daftarURL);
 
-        for (const urlSheet of daftarURL) {
-          try {
-            const response = await fetchDenganTimeout(urlSheet, DATABASE_FETCH_TIMEOUT);
-            if (!response.ok) continue;
-
-            csvText = await response.text();
-            if (csvText && csvText.includes(",")) {
-              berhasil = true;
-              break;
-            }
-          } catch (e) {}
+        if (!csvText || !csvText.includes(",")) {
+          throw new Error("Database kosong atau tidak valid.");
         }
-
-        if (!berhasil) throw new Error("Database gagal dibaca.");
 
         simpanCacheDatabase(csvText);
 
@@ -762,15 +796,14 @@
           if (tampilkanErrorJikaGagal) {
             tampilkanError(
               "KODE TIDAK DITEMUKAN",
-              `Kode "${kodeUjian}" tidak ada di Spreadsheet. Pastikan kolom A berisi Nama Mata Pelajaran, kolom B berisi Kode Ujian, dan kolom C berisi Link Google Form.`
+              `Kode "${kodeUjian}" tidak ada di Spreadsheet. Pastikan kolom A Nama Mapel, kolom B Kode Ujian, kolom C Link Google Form.`
             );
           }
           return;
         }
 
-        linkGoogleForm = ubahKeEmbedGoogleForm(link);
-        databaseSiap = true;
-        aktifkanTombolMulai("Ujian siap. Login email Google dulu, tes kunci, lalu klik Mulai Ujian.");
+        setDataUjian(dataUjian, "spreadsheet");
+        aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Login email Google dulu, lalu klik Mulai Ujian.`);
       } catch (error) {
         const cache = ambilCacheDatabase(true);
 
@@ -779,11 +812,8 @@
           const dataCache = databaseCache.get(kodeUjian);
 
           if (dataCache && dataCache.link) {
-            namaMapel = dataCache.namaMapel || kodeUjian.toUpperCase();
-            linkGoogleForm = ubahKeEmbedGoogleForm(dataCache.link);
-            databaseSiap = true;
-            tampilkanNamaMapel();
-            aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Memakai data terakhir karena koneksi database lambat.`);
+            setDataUjian(dataCache, "cache lama");
+            aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Memakai data terakhir karena database lambat.`);
             return;
           }
         }
@@ -791,21 +821,66 @@
         if (tampilkanErrorJikaGagal) {
           tampilkanError(
             "DATABASE LAMBAT / ERROR",
-            "Google Spreadsheet belum terbaca. Periksa koneksi internet, Publish to Web, dan pastikan Spreadsheet bisa diakses publik."
+            "Google Spreadsheet belum terbaca. Periksa koneksi internet, Publish to Web, dan pastikan kolom A Nama Mapel, kolom B Kode, kolom C Link Google Form."
           );
         }
       }
     }
 
-    function fetchDenganTimeout(url, timeoutMs) {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    function setDataUjian(data, sumber) {
+      namaMapel = data.namaMapel || data.nama || kodeUjian.toUpperCase();
+      linkGoogleForm = ubahKeEmbedGoogleForm(data.link);
+      databaseSiap = true;
+      tampilkanNamaMapel();
+      console.log("Data ujian dari:", sumber);
+    }
 
-      return fetch(url, {
-        method: "GET",
-        cache: "force-cache",
-        signal: controller.signal
-      }).finally(() => clearTimeout(timeout));
+    function ambilCSVTercepat(daftarURL) {
+      return new Promise((resolve, reject) => {
+        let selesai = false;
+        let gagal = 0;
+        const controllers = [];
+
+        const timeoutGlobal = setTimeout(() => {
+          if (!selesai) {
+            selesai = true;
+            controllers.forEach(c => c.abort());
+            reject(new Error("Timeout database."));
+          }
+        }, DATABASE_FETCH_TIMEOUT);
+
+        daftarURL.forEach(url => {
+          const controller = new AbortController();
+          controllers.push(controller);
+
+          fetch(url, {
+            method: "GET",
+            cache: "force-cache",
+            signal: controller.signal
+          })
+          .then(response => {
+            if (!response.ok) throw new Error("Response tidak OK.");
+            return response.text();
+          })
+          .then(text => {
+            if (selesai) return;
+            if (!text || !text.includes(",")) throw new Error("CSV tidak valid.");
+
+            selesai = true;
+            clearTimeout(timeoutGlobal);
+            controllers.forEach(c => c.abort());
+            resolve(text);
+          })
+          .catch(() => {
+            gagal++;
+            if (!selesai && gagal >= daftarURL.length) {
+              selesai = true;
+              clearTimeout(timeoutGlobal);
+              reject(new Error("Semua URL database gagal."));
+            }
+          });
+        });
+      });
     }
 
     function aktifkanTombolMulai(pesan) {
@@ -885,7 +960,7 @@
     }
 
     function bukaLoginGoogle() {
-      window.open("https://accounts.google.com/", "_blank", "noopener,noreferrer");
+      window.location.href = "https://accounts.google.com/";
     }
 
     function masukFullscreen() {
@@ -907,11 +982,6 @@
           screen.orientation.lock("portrait-primary").catch(() => {});
         }
       } catch (e) {}
-    }
-
-      if ("vibrate" in navigator) {
-        navigator.vibrate(0);
-      }
     }
 
     // ============================================================
@@ -958,7 +1028,7 @@
     }
 
     // ============================================================
-    // DETEKSI SUBMIT GOOGLE FORM
+    // GOOGLE FORM 3 BAGIAN
     // ============================================================
     function siapkanDeteksiSubmitForm() {
       const iframe = document.getElementById("ujian-frame");
@@ -970,33 +1040,15 @@
       btnSelesai.disabled = false;
       btnSelesai.innerText = "Selesai";
 
-      /*
-        Google Form Bapak memiliki 3 bagian:
-        1. Identitas
-        2. Soal pilihan
-        3. Pernyataan tidak menyontek
-
-        Tombol "Berikutnya" antarbagian bisa memuat ulang iframe.
-        Sistem tidak menjadikan reload iframe sebagai tanda selesai.
-        Proteksi tetap aktif sampai siswa sendiri klik tombol Selesai di bar atas.
-      */
       iframe.onload = function() {
         if (!examAktif || statusTerkunci) return;
         formLoadCount++;
       };
     }
 
-    function aktifkanTombolSelesai() {
-      const btnSelesai = document.getElementById("btn-selesai-ujian");
-      tombolSelesaiAktif = true;
-      btnSelesai.style.display = "inline-block";
-      btnSelesai.disabled = false;
-      btnSelesai.innerText = "Selesai";
-    }
-
     function selesaikanUjian() {
       if (!tombolSelesaiAktif) {
-        alert("Tombol selesai aktif setelah jawaban berhasil dikirim.");
+        alert("Tombol selesai belum aktif.");
         return;
       }
 
@@ -1008,6 +1060,8 @@
     }
 
     function akhiriSesiUjian() {
+      const durasiFinal = formatDurasi(Date.now() - examStartedAt);
+
       sistemSedangUnlock = true;
       examAktif = false;
       statusTerkunci = false;
@@ -1044,7 +1098,9 @@
         <h1 class="main-title">UJIAN SELESAI</h1>
         <div class="sub-title">SMKN 1 CIKARANG PUSAT</div>
         <div class="info-box" style="text-align:center;">
-          Jawaban sudah dikirim.<br><br><b>Durasi pengerjaan: ${formatDurasi(Date.now() - examStartedAt)}</b><br><br>Silakan panggil pengawas atau tutup halaman ini sesuai arahan guru.
+          Jawaban sudah dikirim.<br><br>
+          <b>Durasi pengerjaan: ${durasiFinal}</b><br><br>
+          Silakan panggil pengawas atau tutup halaman ini sesuai arahan guru.
         </div>
       `;
 
@@ -1055,6 +1111,58 @@
       sistemSedangUnlock = false;
     }
 
+    // ============================================================
+    // DURASI UJIAN & MODE POTRET
+    // ============================================================
+    function mulaiDurasiUjian() {
+      if (durationInterval) clearInterval(durationInterval);
+      updateDurasiUjian();
+      durationInterval = setInterval(updateDurasiUjian, 1000);
+    }
+
+    function updateDurasiUjian() {
+      const label = document.getElementById("duration-label");
+      if (!label || !examStartedAt) return;
+      label.innerText = formatDurasi(Date.now() - examStartedAt);
+    }
+
+    function formatDurasi(ms) {
+      const totalDetik = Math.max(0, Math.floor(ms / 1000));
+      const jam = Math.floor(totalDetik / 3600);
+      const menit = Math.floor((totalDetik % 3600) / 60);
+      const detik = totalDetik % 60;
+
+      const mm = String(menit).padStart(2, "0");
+      const ss = String(detik).padStart(2, "0");
+
+      if (jam > 0) return `${jam}:${mm}:${ss}`;
+      return `${mm}:${ss}`;
+    }
+
+    function mulaiCekOrientasiPotret() {
+      kunciOrientasiPotret();
+
+      if (orientationCheckInterval) clearInterval(orientationCheckInterval);
+      orientationCheckInterval = setInterval(cekOrientasiPotret, 1200);
+
+      window.addEventListener("orientationchange", () => {
+        setTimeout(() => {
+          kunciOrientasiPotret();
+          cekOrientasiPotret();
+        }, 800);
+      });
+    }
+
+    function cekOrientasiPotret() {
+      if (!examAktif || statusTerkunci) return;
+
+      const landscapeByMedia = window.matchMedia && window.matchMedia("(orientation: landscape)").matches;
+      const landscapeBySize = window.innerWidth > window.innerHeight * 1.12;
+
+      if (landscapeByMedia || landscapeBySize) {
+        prosesPelanggaran("Mode landscape terdeteksi. Ujian wajib menggunakan mode potret.");
+      }
+    }
 
     // ============================================================
     // ZONA KANAN PENGAWAS SMARTPHONE
@@ -1081,7 +1189,6 @@
 
         guardLongPressTimer = setTimeout(() => {
           if (!examAktif || statusTerkunci || guardGestureSudahDiproses) return;
-
           guardGestureSudahDiproses = true;
           prosesZonaKananDenganToleransi("Tekan lama di zona kanan terdeteksi.");
         }, 650);
@@ -1121,8 +1228,6 @@
 
         const lamaSentuh = Date.now() - guardTouchStartTime;
 
-        // Sentuhan pendek tanpa gerakan dianggap bisa saja tidak sengaja.
-        // Karena itu masuk toleransi peringatan pertama, bukan langsung lock.
         if (!guardGestureSudahDiproses && lamaSentuh >= 40) {
           guardGestureSudahDiproses = true;
           prosesZonaKananDenganToleransi("Sentuhan di zona kanan terdeteksi.");
@@ -1131,16 +1236,13 @@
 
       guard.addEventListener("mousedown", function(event) {
         if (!examAktif || statusTerkunci) return;
-
         event.preventDefault();
         event.stopPropagation();
-
         prosesZonaKananDenganToleransi("Klik di zona kanan terdeteksi.");
       });
 
       guard.addEventListener("contextmenu", function(event) {
         event.preventDefault();
-
         if (examAktif && !statusTerkunci) {
           prosesZonaKananDenganToleransi("Klik kanan / tekan lama di zona kanan terdeteksi.");
         }
@@ -1177,7 +1279,6 @@
         warning.style.display = "none";
       }, 4500);
     }
-
 
     // ============================================================
     // PROTEKSI SMARTPHONE: TAB, POPUP, SPLIT SCREEN, GOOGLE SEARCH
@@ -1218,17 +1319,10 @@
       simpanUkuranAwalProteksi();
 
       if (securityCheckInterval) clearInterval(securityCheckInterval);
-      if (durationInterval) clearInterval(durationInterval);
-      if (orientationCheckInterval) clearInterval(orientationCheckInterval);
-
-      securityCheckInterval = setInterval(() => {
-        cekKeamananLayar("Pemeriksaan berkala");
-      }, 1000);
+      securityCheckInterval = setInterval(() => cekKeamananLayar("Pemeriksaan berkala"), 1000);
 
       window.addEventListener("resize", () => {
-        setTimeout(() => {
-          cekKeamananLayar("Ukuran layar berubah");
-        }, 500);
+        setTimeout(() => cekKeamananLayar("Ukuran layar berubah"), 500);
       });
 
       window.addEventListener("orientationchange", () => {
@@ -1241,9 +1335,7 @@
 
       if (window.visualViewport) {
         window.visualViewport.addEventListener("resize", () => {
-          setTimeout(() => {
-            cekKeamananLayar("Visual viewport berubah");
-          }, 500);
+          setTimeout(() => cekKeamananLayar("Visual viewport berubah"), 500);
         });
       }
 
@@ -1257,8 +1349,6 @@
 
           const fullscreenAktif = document.fullscreenElement || document.webkitFullscreenElement;
 
-          // Klik ke iframe Google Form bisa membuat blur.
-          // Maka lock hanya jika blur disertai hidden, keluar fullscreen, atau layar mencurigakan.
           if (document.hidden || !fullscreenAktif || layarMengecilMencurigakan()) {
             prosesPelanggaran("Popup, tab, split screen, atau aplikasi lain terdeteksi.");
           }
@@ -1308,23 +1398,12 @@
       const rasioLebar = window.innerWidth / screenWidth;
       const rasioTinggi = window.innerHeight / screenHeight;
 
-      // Smartphone split screen kiri-kanan atau floating window.
-      if (rasioLebar < 0.82) {
-        return true;
-      }
+      if (rasioLebar < 0.82) return true;
+      if (rasioTinggi < 0.62 && rasioLebar < 0.98) return true;
 
-      // Split screen atas-bawah. Pakai innerHeight agar keyboard HP tidak terlalu sering salah deteksi.
-      if (rasioTinggi < 0.62 && rasioLebar < 0.98) {
-        return true;
-      }
-
-      // VisualViewport lebih dipakai untuk mendeteksi lebar mengecil, bukan tinggi,
-      // karena keyboard HP sering mengurangi tinggi viewport.
       if (window.visualViewport) {
         const vvLebar = window.visualViewport.width / screenWidth;
-        if (vvLebar < 0.82) {
-          return true;
-        }
+        if (vvLebar < 0.82) return true;
       }
 
       return false;
@@ -1341,10 +1420,7 @@
 
     function mulaiCekLayar() {
       if (screenCheckInterval) clearInterval(screenCheckInterval);
-
-      screenCheckInterval = setInterval(() => {
-        cekLayarTerbagi();
-      }, 2000);
+      screenCheckInterval = setInterval(cekLayarTerbagi, 2000);
     }
 
     function cekLayarTerbagi() {
@@ -1364,8 +1440,6 @@
       }
     }
 
-    // Deteksi aktivitas tidak wajar di area induk.
-    // Catatan: aktivitas salin di dalam iframe Google Form tidak selalu bisa terbaca karena batas domain Google.
     ["copy", "cut", "paste", "contextmenu", "dragstart", "selectstart"].forEach(evt => {
       document.addEventListener(evt, event => {
         event.preventDefault();
@@ -1388,9 +1462,6 @@
 
       longPressTimer = setTimeout(() => {
         if (!examAktif || statusTerkunci) return;
-
-        // Klik tahan di luar iframe dianggap mencurigakan.
-        // Klik tahan di dalam iframe Google Form mungkin tidak terbaca.
         tampilIndikator("Klik tahan terdeteksi");
         prosesPelanggaran("Klik tahan terdeteksi. Aktivitas ini tidak diperlukan saat ujian.");
       }, 850);
@@ -1408,8 +1479,6 @@
         longPressTimer = null;
       }
 
-      // Scroll atas-bawah diperbolehkan.
-      // Geser kiri-kanan di area induk dianggap tidak normal.
       if (geserX > 70 && geserX > geserY * 1.6) {
         event.preventDefault();
         tampilIndikator("Geser kiri/kanan terdeteksi");
@@ -1433,20 +1502,10 @@
       const tombolTerlarang =
         event.key === "F12" ||
         event.key === "PrintScreen" ||
-
-        // Copy, inspect, print, save, refresh
         (ctrl && ["U", "S", "P", "A", "C", "X", "V", "R"].includes(key)) ||
-
-        // Address/search bar, tab baru, window baru
         (ctrl && ["L", "K", "T", "N", "W"].includes(key)) ||
-
-        // Pindah tab
         (ctrl && event.key === "Tab") ||
-
-        // Inspect/incognito
         (ctrl && shift && ["I", "J", "C", "K", "N"].includes(key)) ||
-
-        // Navigasi browser
         (alt && ["ARROWLEFT", "ARROWRIGHT", "TAB"].includes(key));
 
       if (tombolTerlarang) {
@@ -1668,7 +1727,7 @@
     }
 
     // ============================================================
-    // OPSIONAL SERVER SESSION UNTUK DETEKSI PERANGKAT BERBEDA
+    // OPSIONAL SERVER SESSION
     // ============================================================
     async function mulaiSessionServerOpsional() {
       if (!SESSION_API_URL) return true;
@@ -1831,9 +1890,7 @@
 
     function buatDatabaseDariCSV(csvText) {
       const database = new Map();
-      const baris = csvText.split(/
-?
-/).filter(row => row.trim() !== "");
+      const baris = csvText.split(/\r?\n/).filter(row => row.trim() !== "");
 
       for (const row of baris) {
         const kolom = parseCSVLine(row);
@@ -1842,15 +1899,10 @@
         const kolomB = (kolom[1] || "").trim();
         const kolomC = (kolom[2] || "").trim();
 
-        // Format baru:
-        // Kolom A = Nama Mata Pelajaran
-        // Kolom B = Kode Ujian
-        // Kolom C = Link Google Form
         let nama = kolomA;
         let kode = kolomB;
         let link = kolomC;
 
-        // Lewati header spreadsheet
         const headerA = kolomA.toLowerCase();
         const headerB = kolomB.toLowerCase();
         const headerC = kolomC.toLowerCase();
@@ -1864,9 +1916,8 @@
           continue;
         }
 
-        // Kompatibilitas format lama:
-        // Kolom A = Kode Ujian
-        // Kolom B = Link Google Form
+        // Kompatibel dengan format lama:
+        // Kolom A = Kode, Kolom B = Link
         if (!link && kolomB.includes("docs.google.com/forms")) {
           nama = kolomA;
           kode = kolomA;
@@ -1913,7 +1964,7 @@
     }
 
     function ubahKeEmbedGoogleForm(url) {
-      url = url.trim();
+      url = String(url || "").trim();
 
       if (!url.includes("docs.google.com/forms")) {
         throw new Error("Link bukan Google Form.");
@@ -1932,16 +1983,14 @@
     // ============================================================
     // UI
     // ============================================================
-    function tampilkanNamaMapel() {
-      const label = document.getElementById("exam-code-label");
-      if (label && namaMapel) {
-        label.innerText = namaMapel.toUpperCase();
-      }
-    }
-
     function ubahStatus(teks) {
       const el = document.getElementById("status-text");
       if (el) el.innerText = teks;
+    }
+
+    function tampilkanNamaMapel() {
+      const label = document.getElementById("exam-code-label");
+      if (label && namaMapel) label.innerText = namaMapel.toUpperCase();
     }
 
     function updateChecklist() {
