@@ -575,12 +575,12 @@
 
   <div id="exam-screen">
     <div id="topbar">
-      <div class="left" id="exam-code-label">KODE: -</div>
+      <div class="left" id="exam-code-label">MAPEL | KODE: -</div>
       <div class="center" id="clock-label">Memuat waktu...</div>
       <div class="right">
-        <span id="duration-label">00:00</span>
-        <span id="offense-label">PESERTA AMAN | </span>
-        <span id="camera-label">KAMERA AKTIF</span>
+        <span id="duration-label">DURASI | 00:00</span>
+        <span id="offense-label"> | PESERTA AMAN | </span>
+        <span id="camera-label"> | KAMERA AKTIF</span>
         <button id="btn-selesai-ujian" class="btn-finish" onclick="selesaikanUjian()" disabled>Selesai</button>
       </div>
     </div>
@@ -1006,7 +1006,7 @@
         .then(stream => {
           lokalStream = stream;
           document.getElementById("camera-monitor").srcObject = stream;
-          document.getElementById("camera-label").innerText = "KAMERA";
+          document.getElementById("camera-label").innerText = "KAMERA AKTIF";
           updateChecklist();
           resolve(stream);
         })
