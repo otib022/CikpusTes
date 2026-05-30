@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Cikpus CyberLock Lite</title>
+  <title>Cikpus CyberLock Lite - Lock Total 30 Menit</title>
 
   <link rel="preconnect" href="https://docs.google.com">
   <link rel="preconnect" href="https://accounts.google.com">
@@ -18,6 +18,15 @@
          50vw = 50% layar kanan
          60vw = 60% layar kanan */
       --zona-kanan: 60vw;
+
+      /* Skala otomatis mengikuti ukuran HP */
+      --ui-scale: 1;
+      --topbar-height: clamp(44px, 7.2vh, 54px);
+      --camera-width: clamp(62px, 18vw, 86px);
+      --camera-height: clamp(84px, 24vw, 116px);
+      --font-small: clamp(9px, 2.6vw, 12px);
+      --font-normal: clamp(12px, 3.5vw, 15px);
+      --title-size: clamp(19px, 5.6vw, 24px);
     }
 
     html, body {
@@ -46,6 +55,18 @@
       filter: blur(9px);
     }
 
+    body.locked-mode #exam-area,
+    body.locked-mode #right-touch-guard,
+    body.locked-mode #camera-monitor,
+    body.locked-mode #watermark,
+    body.locked-mode #topbar {
+      pointer-events: none !important;
+    }
+
+    body.locked-mode iframe {
+      pointer-events: none !important;
+    }
+
     #start-screen {
       width: 100%;
       min-height: 100vh;
@@ -68,11 +89,13 @@
       padding: 20px;
       text-align: center;
       box-shadow: 0 0 28px rgba(0,255,170,.24);
+      transform: scale(var(--ui-scale));
+      transform-origin: top center;
     }
 
     .main-title {
       margin: 0;
-      font-size: 22px;
+      font-size: var(--title-size);
       font-weight: 900;
       letter-spacing: 1.3px;
       color: #00ffaa;
@@ -82,7 +105,7 @@
     .anti-cheat-title {
       margin: 6px 0 8px;
       color: #ff3344;
-      font-size: 16px;
+      font-size: clamp(14px, 4.2vw, 17px);
       font-weight: 900;
       letter-spacing: .7px;
       text-transform: uppercase;
@@ -97,7 +120,7 @@
 
     .sub-title {
       margin: 0 0 14px;
-      font-size: 12px;
+      font-size: var(--font-small);
       font-weight: bold;
       letter-spacing: 1px;
       color: #00d2ff;
@@ -111,7 +134,7 @@
       background: rgba(255, 51, 68, .10);
       color: white;
       text-align: left;
-      font-size: 14px;
+      font-size: var(--font-normal);
       line-height: 1.55;
     }
 
@@ -123,7 +146,7 @@
       background: rgba(0, 210, 255, .08);
       color: #dffaff;
       text-align: left;
-      font-size: 13px;
+      font-size: clamp(11px, 3.2vw, 13px);
       line-height: 1.45;
     }
 
@@ -147,7 +170,7 @@
       border-radius: 10px;
       background: #030815;
       color: white;
-      font-size: 15px;
+      font-size: clamp(13px, 3.8vw, 15px);
       outline: none;
     }
 
@@ -155,7 +178,7 @@
       min-height: 22px;
       margin: 10px 0 12px;
       color: #d7fff5;
-      font-size: 13px;
+      font-size: clamp(11px, 3.2vw, 13px);
       line-height: 1.45;
     }
 
@@ -223,7 +246,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 50px;
+      height: var(--topbar-height);
       z-index: 900;
       display: flex;
       align-items: center;
@@ -278,7 +301,7 @@
       position: absolute;
       left: 0;
       right: 0;
-      top: 50px;
+      top: var(--topbar-height);
       bottom: 0;
       background: white;
       touch-action: pan-y;
@@ -295,7 +318,7 @@
 
     #right-touch-guard {
       position: fixed;
-      top: 50px;
+      top: var(--topbar-height);
       right: 0;
       bottom: 0;
       width: var(--zona-kanan);
@@ -322,8 +345,8 @@
       right: 10px;
       bottom: 12px;
       z-index: 950;
-      width: 78px;
-      height: 104px;
+      width: var(--camera-width);
+      height: var(--camera-height);
       border: 2px solid #00ffaa;
       border-radius: 12px;
       background: black;
@@ -335,7 +358,7 @@
 
     #watermark {
       position: fixed;
-      inset: 50px 0 0 0;
+      inset: var(--topbar-height) 0 0 0;
       z-index: 910;
       pointer-events: none;
       opacity: .12;
@@ -388,13 +411,18 @@
       display: none;
       position: fixed;
       inset: 0;
-      z-index: 99999;
+      z-index: 2147483647;
       align-items: center;
       justify-content: center;
-      padding: 18px;
+      padding: clamp(12px, 4vw, 20px);
       color: #ff3344;
       background: #170205;
       animation: redFlash .65s infinite alternate;
+      pointer-events: auto;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
 
     @keyframes redFlash {
@@ -404,8 +432,8 @@
 
     .lock-panel {
       width: 100%;
-      max-width: 450px;
-      padding: 24px;
+      max-width: min(450px, 94vw);
+      padding: clamp(16px, 5vw, 24px);
       border: 3px solid #ff3344;
       border-radius: 18px;
       background: rgba(20, 3, 5, .96);
@@ -414,8 +442,8 @@
     }
 
     .warning-logo {
-      width: 96px;
-      height: 96px;
+      width: clamp(74px, 22vw, 96px);
+      height: clamp(74px, 22vw, 96px);
       margin: 0 auto 14px;
       border-radius: 50%;
       display: flex;
@@ -423,7 +451,7 @@
       justify-content: center;
       background: radial-gradient(circle, #ff3344 0%, #9b0613 72%);
       color: #fff;
-      font-size: 52px;
+      font-size: clamp(40px, 12vw, 52px);
       font-weight: 900;
       box-shadow: 0 0 34px rgba(255, 51, 68, .85);
       animation: warningBlink .55s infinite alternate;
@@ -450,7 +478,7 @@
 
     .lock-panel p {
       color: white;
-      font-size: 14px;
+      font-size: var(--font-normal);
       line-height: 1.55;
     }
 
@@ -462,7 +490,7 @@
       border-radius: 10px;
       background: #000;
       color: #ff3344;
-      font-size: 16px;
+      font-size: clamp(14px, 4.2vw, 17px);
       font-weight: 900;
       text-align: center;
       outline: none;
@@ -470,7 +498,7 @@
 
     .error-title {
       color: #ff3344;
-      font-size: 22px;
+      font-size: var(--title-size);
       font-weight: 900;
       margin-bottom: 12px;
     }
@@ -503,11 +531,11 @@
         2. Isi identitas, jawab soal, dan isi pernyataan tidak menyontek dengan jujur.<br>
         3. Gunakan hanya bagian kiri layar untuk scroll dan menjawab soal.<br>
         4. Area kanan adalah zona pengawasan; sentuhan pertama diberi peringatan, berikutnya dikunci.<br>
-        5. Dilarang membuka Google, tab/aplikasi lain, split screen, screenshot, atau keluar halaman ujian.
+        5. Dilarang membuka Google, tab/aplikasi lain, split screen, screenshot, atau keluar halaman ujian. Tombol Selesai muncul setelah minimal 30 menit.
       </div>
 
       <div class="info-box">
-        Sistem memakai Google Spreadsheet. Format: Kolom A Nama Mapel, Kolom B Kode Ujian, Kolom C Link Google Form.
+        Sistem memakai Google Spreadsheet. Tombol Selesai tidak muncul dari awal dan jika sudah selesai, ujian tidak bisa dibuka ulang di perangkat yang sama.
       </div>
 
       <div class="form-group">
@@ -590,6 +618,11 @@
     const MODE_KETAT = true;
     const BATAS_PERINGATAN_ZONA_KANAN = 1;
 
+    // Tombol selesai tidak muncul dari awal.
+    // Tombol selesai baru muncul setelah ujian berjalan minimal 30 menit.
+    const MIN_DURASI_TOMBOL_SELESAI_MS = 30 * 60 * 1000; // 30 menit
+    const MIN_LOAD_FORM_SELESAI = 3; // membantu mendeteksi perpindahan bagian Google Form
+
     const DATABASE_CACHE_TTL = 60 * 60 * 1000; // 1 jam
     const DATABASE_FETCH_TIMEOUT = 5500; // 5,5 detik
 
@@ -619,6 +652,7 @@
     const KEY_LOG = `${storagePrefix}_last_log`;
     const KEY_CACHE_GLOBAL = `cyberlock_lite_database_cache_${SPREADSHEET_ID}_${SHEET_GID}`;
     const KEY_TOKEN_UJI_COBA_USED = `${storagePrefix}_token_uji_coba_used`;
+    const KEY_FINISHED = `${storagePrefix}_finished`;
 
     let peserta = "";
     let examAktif = false;
@@ -633,6 +667,7 @@
     let clockInterval = null;
     let durationInterval = null;
     let examStartedAt = 0;
+    let scaleCheckInterval = null;
     let abaikanCekLayarSampai = 0;
 
     let channel = null;
@@ -644,6 +679,8 @@
     let touchStartX = 0;
     let touchStartY = 0;
     let databaseSiap = false;
+    let formLoadCount = 0;
+    let tombolSelesaiAktif = false;
 
     let guardTouchStartX = 0;
     let guardTouchStartY = 0;
@@ -657,6 +694,9 @@
     // LOAD AWAL
     // ============================================================
     window.addEventListener("load", async () => {
+      sesuaikanSkalaLayar();
+      window.addEventListener("resize", sesuaikanSkalaLayar);
+      window.addEventListener("orientationchange", () => setTimeout(sesuaikanSkalaLayar, 500));
       mulaiJamTanggal();
       siapkanKomunikasiAntarTab();
       updateChecklist();
@@ -667,6 +707,11 @@
       }
 
       document.getElementById("exam-code-label").innerText = `KODE: ${kodeUjian.toUpperCase()}`;
+
+      if (localStorage.getItem(KEY_FINISHED) === "true") {
+        tampilkanUjianSudahSelesai();
+        return;
+      }
 
       if (localStorage.getItem(KEY_BREACH) === "true") {
         kunciUjian("Sesi sebelumnya sudah terkunci karena pelanggaran.");
@@ -885,6 +930,7 @@
       jumlahSentuhanZonaKanan = 0;
       examStartedAt = Date.now();
 
+      sesuaikanSkalaLayar();
       document.body.classList.add("exam-mode");
       document.getElementById("start-screen").style.display = "none";
       document.getElementById("exam-screen").style.display = "block";
@@ -980,17 +1026,67 @@
       const iframe = document.getElementById("ujian-frame");
       const btnSelesai = document.getElementById("btn-selesai-ujian");
 
+      formLoadCount = 0;
+      tombolSelesaiAktif = false;
+
+      btnSelesai.style.display = "none";
+      btnSelesai.disabled = true;
+      btnSelesai.innerText = "Selesai";
+
+      iframe.onload = function() {
+        if (!examAktif || statusTerkunci) return;
+
+        formLoadCount++;
+        cekTombolSelesaiTertunda();
+      };
+    }
+
+    function cekTombolSelesaiTertunda() {
+      if (!examAktif || statusTerkunci || tombolSelesaiAktif) return;
+
+      const durasiBerjalan = Date.now() - examStartedAt;
+
+      /*
+        Tombol selesai baru muncul jika:
+        1. Durasi minimal sudah terpenuhi, ATAU
+        2. Google Form sudah beberapa kali berpindah halaman/bagian.
+
+        Catatan:
+        Karena Google Form berada di iframe lintas-domain, sistem tidak bisa membaca
+        isi tombol Kirim secara langsung. Maka pengaman utamanya adalah:
+        - tombol selesai tidak muncul dari awal,
+        - setelah selesai ditekan, ujian dikunci permanen untuk kode tersebut di browser ini.
+      */
+      const durasiCukup = durasiBerjalan >= MIN_DURASI_TOMBOL_SELESAI_MS;
+      const bagianFormCukup = formLoadCount >= MIN_LOAD_FORM_SELESAI;
+
+      if (durasiCukup || bagianFormCukup) {
+        aktifkanTombolSelesai();
+      }
+    }
+
+    function aktifkanTombolSelesai() {
+      const btnSelesai = document.getElementById("btn-selesai-ujian");
+      tombolSelesaiAktif = true;
       btnSelesai.style.display = "inline-block";
       btnSelesai.disabled = false;
       btnSelesai.innerText = "Selesai";
-
-      iframe.onload = function() {};
     }
 
     function selesaikanUjian() {
+      if (!tombolSelesaiAktif) {
+        alert("Tombol Selesai belum aktif. Selesaikan ujian sesuai waktu dan alur Google Form.");
+        return;
+      }
+
       const durasi = formatDurasi(Date.now() - examStartedAt);
-      const yakin = confirm(`Pastikan jawaban sudah terkirim. Durasi pengerjaan: ${durasi}. Akhiri ujian sekarang?`);
+      const yakin = confirm(
+        `Pastikan jawaban sudah dikirim di Google Form.\n\nDurasi pengerjaan: ${durasi}.\n\nJika klik OK, ujian dianggap SELESAI dan tidak bisa dibuka ulang di perangkat/browser ini.`
+      );
+
       if (!yakin) return;
+
+      localStorage.setItem(KEY_FINISHED, "true");
       akhiriSesiUjian();
     }
 
@@ -1009,6 +1105,7 @@
       if (screenCheckInterval) clearInterval(screenCheckInterval);
       if (clockInterval) clearInterval(clockInterval);
       if (durationInterval) clearInterval(durationInterval);
+      if (scaleCheckInterval) clearInterval(scaleCheckInterval);
       if (fokusHilangTimer) clearTimeout(fokusHilangTimer);
       if (longPressTimer) clearTimeout(longPressTimer);
       if (guardLongPressTimer) clearTimeout(guardLongPressTimer);
@@ -1022,14 +1119,14 @@
       iframe.onload = null;
       iframe.src = "about:blank";
 
-      document.body.classList.remove("exam-mode", "secure-blur");
+      document.body.classList.remove("exam-mode", "secure-blur", "locked-mode");
       document.getElementById("exam-screen").style.display = "none";
       document.getElementById("start-screen").style.display = "flex";
       document.getElementById("panel-konten").innerHTML = `
         <h1 class="main-title">UJIAN SELESAI</h1>
         <div class="sub-title">SMKN 1 CIKARANG PUSAT</div>
         <div class="info-box" style="text-align:center;">
-          Jawaban sudah dikirim.<br><br>
+          Ujian sudah ditutup pada perangkat ini.<br><br>Pastikan jawaban sudah dikirim di Google Form.<br><br>
           <b>Durasi pengerjaan: ${durasiFinal}</b><br><br>
           Silakan panggil pengawas atau tutup halaman ini sesuai arahan guru.
         </div>
@@ -1047,6 +1144,7 @@
     // ============================================================
     function mulaiDurasiUjian() {
       if (durationInterval) clearInterval(durationInterval);
+      if (scaleCheckInterval) clearInterval(scaleCheckInterval);
       updateDurasiUjian();
       durationInterval = setInterval(updateDurasiUjian, 1000);
     }
@@ -1055,6 +1153,7 @@
       const label = document.getElementById("duration-label");
       if (!label || !examStartedAt) return;
       label.innerText = formatDurasi(Date.now() - examStartedAt);
+      cekTombolSelesaiTertunda();
     }
 
     function formatDurasi(ms) {
@@ -1167,6 +1266,53 @@
       warning.style.display = "block";
       setTimeout(() => { warning.style.display = "none"; }, 4500);
     }
+
+
+    // ============================================================
+    // MODE TERKUNCI TOTAL
+    // ============================================================
+    function eventDariPanelKunci(event) {
+      const overlay = document.getElementById("lock-overlay");
+      const panel = document.querySelector(".lock-panel");
+
+      if (!statusTerkunci || !overlay || overlay.style.display !== "flex") {
+        return true;
+      }
+
+      // Hanya input kode dan tombol buka kunci yang boleh digunakan.
+      if (panel && panel.contains(event.target)) {
+        return true;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
+
+    ["touchstart", "touchmove", "touchend", "click", "mousedown", "mouseup", "pointerdown", "pointermove", "pointerup", "contextmenu", "copy", "cut", "paste", "selectstart"].forEach(evt => {
+      document.addEventListener(evt, eventDariPanelKunci, true);
+    });
+
+    document.addEventListener("keydown", function(event) {
+      if (!statusTerkunci) return;
+
+      const tokenInput = document.getElementById("token-input");
+      const panel = document.querySelector(".lock-panel");
+
+      if (panel && panel.contains(event.target)) {
+        // Izinkan mengetik kode, Tab, Backspace, Enter.
+        if (event.key === "Enter") {
+          event.preventDefault();
+          bukaKunciUjian();
+        }
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (tokenInput) tokenInput.focus();
+    }, true);
 
     // ============================================================
     // PROTEKSI INTI
@@ -1362,7 +1508,15 @@
 
       document.getElementById("lock-reason").innerText = alasan;
       document.getElementById("lock-overlay").style.display = "flex";
-      document.body.classList.add("secure-blur");
+      document.body.classList.add("secure-blur", "locked-mode");
+
+      const iframe = document.getElementById("ujian-frame");
+      if (iframe) iframe.style.pointerEvents = "none";
+
+      setTimeout(() => {
+        const tokenInput = document.getElementById("token-input");
+        if (tokenInput) tokenInput.focus();
+      }, 200);
 
       if (lokalStream) {
         lokalStream.getTracks().forEach(track => track.stop());
@@ -1399,8 +1553,11 @@
       statusTerkunci = false;
       localStorage.removeItem(KEY_BREACH);
 
-      document.body.classList.remove("secure-blur");
+      document.body.classList.remove("secure-blur", "locked-mode");
       document.getElementById("lock-overlay").style.display = "none";
+
+      const iframe = document.getElementById("ujian-frame");
+      if (iframe) iframe.style.pointerEvents = "auto";
       document.getElementById("token-input").value = "";
 
       simpanSesiAktif();
@@ -1686,6 +1843,37 @@
       return `${url}?embedded=true`;
     }
 
+
+    // ============================================================
+    // SKALA OTOMATIS HP
+    // ============================================================
+    function sesuaikanSkalaLayar() {
+      const lebar = Math.max(320, window.innerWidth || document.documentElement.clientWidth || 360);
+      const tinggi = Math.max(480, window.innerHeight || document.documentElement.clientHeight || 640);
+
+      let skala = 1;
+
+      if (lebar <= 340) {
+        skala = 0.88;
+      } else if (lebar <= 380) {
+        skala = 0.94;
+      } else if (lebar >= 430) {
+        skala = 1.04;
+      }
+
+      document.documentElement.style.setProperty("--ui-scale", String(skala));
+
+      // Topbar sedikit lebih kecil di HP pendek.
+      const topbar = Math.max(42, Math.min(54, Math.round(tinggi * 0.072)));
+      document.documentElement.style.setProperty("--topbar-height", `${topbar}px`);
+
+      // Kamera otomatis mengikuti ukuran layar agar tidak menutup soal terlalu banyak.
+      const cameraW = Math.max(56, Math.min(86, Math.round(lebar * 0.18)));
+      const cameraH = Math.round(cameraW * 1.34);
+      document.documentElement.style.setProperty("--camera-width", `${cameraW}px`);
+      document.documentElement.style.setProperty("--camera-height", `${cameraH}px`);
+    }
+
     // ============================================================
     // UI
     // ============================================================
@@ -1707,6 +1895,18 @@
       const kamera = lokalStream ? "Kamera aktif" : "Kamera belum aktif";
 
       el.innerText = `Status: ${db} • ${kamera}`;
+    }
+
+
+    function tampilkanUjianSudahSelesai() {
+      document.getElementById("panel-konten").innerHTML = `
+        <h1 class="main-title">UJIAN SUDAH SELESAI</h1>
+        <div class="anti-cheat-title">Akses Ditutup</div>
+        <div class="info-box" style="text-align:center;">
+          Ujian dengan kode <b>${escapeHTML(kodeUjian.toUpperCase())}</b> sudah ditutup pada perangkat/browser ini.<br><br>
+          Jika ini kesalahan, hubungi pengawas/guru.
+        </div>
+      `;
     }
 
     function tampilkanError(judul, deskripsi) {
