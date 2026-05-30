@@ -575,7 +575,7 @@
 
   <div id="exam-screen">
     <div id="topbar">
-      <div class="left" id="exam-code-label">MAPEL | KODE: -</div>
+      <div class="left" id="exam-code-label">MAPEL : -</div>
       <div class="center" id="clock-label">Memuat waktu...</div>
       <div class="right">
         <span id="duration-label">DURASI | 00:00</span>
@@ -1506,7 +1506,7 @@
       if (!examAktif || statusTerkunci) return;
 
       jumlahPelanggaran++;
-      document.getElementById("offense-label").innerText = `LANGGAR: ${jumlahPelanggaran}`;
+      document.getElementById("offense-label").innerText = `PELANGGARAN: ${jumlahPelanggaran} x`;
 
       if (MODE_KETAT || jumlahPelanggaran >= 2) {
         kunciUjian(alasan);
@@ -1940,7 +1940,9 @@
 
     function tampilkanNamaMapel() {
       const label = document.getElementById("exam-code-label");
-      if (label && namaMapel) label.innerText = namaMapel.toUpperCase();
+      if (label && namaMapel) {
+        label.innerText = `MAPEL ${namaMapel.toUpperCase()}`;
+      }
     }
 
     function updateChecklist() {
