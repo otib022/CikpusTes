@@ -521,7 +521,7 @@
         1. Gunakan 1 smartphone dan login email Google sebelum mulai.<br>
         2. Isi isi semua pernyataan dengan jujur dan tidak menyontek.<br>
         3. Gunakan hanya bagian kiri layar untuk scroll dan menjawab soal.<br>
-        4. Area kanan adalah zona pengawasan; sentuhan pertama diberi peringatan, berikutnya dikunci.<br>
+        4. Area kanan adalah zona pengawasan; sentuhan pertama diberi peringatan, berikutnya akan dikunci.<br>
         5. Tombol Selesai muncul setelah ujian berjalan minimal 30 menit.
       </div>
 
@@ -608,9 +608,9 @@
     const TOKEN_PENGAWAS = "GURUOTIB";
     const TOKEN_UJI_COBA = "UJIOTIB";
 
-    const BATAS_PERINGATAN_ZONA_KANAN = 1;
+    const BATAS_PERINGATAN_ZONA_KANAN = 2;
     const MIN_DURASI_TOMBOL_SELESAI_MS = 30 * 60 * 1000; // 30 menit
-    const MIN_LOAD_FORM_SELESAI = 3; // Form 3 bagian
+    const MIN_LOAD_FORM_SELESAI = 2; // Form 3 bagian
 
     const DATABASE_CACHE_TTL = 60 * 60 * 1000; // 1 jam
     const DATABASE_FETCH_TIMEOUT = 5500;
@@ -1231,7 +1231,7 @@
       jumlahSentuhanZonaKanan++;
 
       if (jumlahSentuhanZonaKanan <= BATAS_PERINGATAN_ZONA_KANAN) {
-        tampilPeringatanZonaKanan("PERINGATAN 1: Area kanan adalah zona pengawasan. Gunakan area kiri untuk scroll dan menjawab soal. Jika terulang, ujian dikunci.");
+        tampilPeringatanZonaKanan("PERINGATAN 1: Area kanan adalah zona pengawasan. Gunakan area kiri untuk scroll dan menjawab soal. Jika terulang, ujian akan dikunci.");
         return;
       }
 
