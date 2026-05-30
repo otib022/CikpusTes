@@ -574,16 +574,22 @@
   </div>
 
   <div id="exam-screen">
-    <div id="topbar">
-      <div class="left" id="exam-code-label">MAPEL : -</div>
-      <div class="center" id="clock-label">Memuat waktu...</div>
-      <div class="right">
-        <span id="duration-label">DURASI | 00:00</span>
-        <span id="offense-label"> | PESERTA AMAN | </span>
-        <span id="camera-label"> | KAMERA AKTIF</span>
-        <button id="btn-selesai-ujian" class="btn-finish" onclick="selesaikanUjian()" disabled>Selesai</button>
-      </div>
-    </div>
+
+  <div id="topbar">
+  <div class="left" id="exam-code-label">MAPEL -</div>
+
+  <div class="center" id="clock-label">
+    <span class="date-main">Memuat tanggal...</span>
+    <span class="time-main">Memuat jam...</span>
+  </div>
+
+  <div class="right">
+    <span id="duration-label" class="topbar-status">Durasi 00:00</span>
+    <span id="offense-label" class="topbar-status">Pelanggaran 0x.</span>
+    <span id="camera-label" class="topbar-status">Kamera Aktif</span>
+    <button id="btn-selesai-ujian" class="btn-finish" onclick="selesaikanUjian()" disabled>Selesai</button>
+  </div>
+</div>
 
     <div id="zone-warning">PERINGATAN: Area kanan adalah zona pengawasan. Gunakan area kiri untuk mengerjakan.</div>
     <div id="copy-indicator">Aktivitas terlarang terdeteksi</div>
@@ -1169,7 +1175,7 @@
     function updateDurasiUjian() {
       const label = document.getElementById("duration-label");
       if (!label || !examStartedAt) return;
-      label.innerText = formatDurasi(Date.now() - examStartedAt);
+      label.innerText = `Durasi ${formatDurasi(Date.now() - examStartedAt)}`;
       cekTombolSelesaiTertunda();
     }
 
@@ -1729,8 +1735,59 @@
     // ============================================================
     // JAM, WATERMARK, CSV, CACHE
     // ============================================================
-    function mulaiJamTanggal() {
-      if (clockInterval) clearInterval(clockInterval);
+   function mulaiJamTanggal() {
+  if (clockInterval) clearInterval(clockInterval);
+
+  const namaHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+  const namaBulan = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+
+  const updateJam = () => {
+    const now = new Date();
+
+    const parts = new Intl.DateTimeFormat("id-ID", {
+      timeZone: "Asia/Jakarta",
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    }).formatToParts(now);
+
+    const data = {};
+    parts.forEach(part => {
+      data[part.type] = part.value;
+    });
+
+    const tanggalObj = new Date(
+      Number(data.year),
+      Number(data.month) - 1,
+      Number(data.day)
+    );
+
+    const hari = namaHari[tanggalObj.getDay()];
+    const tanggal = String(Number(data.day)).padStart(2, "0");
+    const bulan = namaBulan[Number(data.month) - 1];
+    const tahun = data.year;
+    const jam = String(data.hour).padStart(2, "0");
+    const menit = String(data.minute).padStart(2, "0");
+
+    const label = document.getElementById("clock-label");
+
+    if (label) {
+      label.innerHTML = `
+        <span class="date-main">${hari}, ${tanggal} ${bulan} ${tahun}</span>
+        <span class="time-main">${jam}:${menit} WIB</span>
+      `;
+    }
+  };
+
+  updateJam();
+  clockInterval = setInterval(updateJam, 1000);
+}
 
       clockInterval = setInterval(() => {
         const now = new Date();
@@ -1961,7 +2018,7 @@
         <h1 class="main-title">UJIAN SUDAH SELESAI</h1>
         <div class="anti-cheat-title">Akses Ditutup</div>
         <div class="info-box" style="text-align:center;">
-          Ujian dengan kode <b>${escapeHTML(kodeUjian.toUpperCase())}</b> sudah ditutup pada perangkat/browser ini.<br><br>
+          Ujian dengan kode <b>${escapeHTML(kodeUjian.toUpperCase())}</b> MAPEL <b>${escapeHTML(namaMapel.toUpperCase())}</b> sudah ditutup pada perangkat/browser ini.<br><br>
           Jika ini kesalahan, hubungi pengawas/guru.
         </div>
       `;
