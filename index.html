@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Cikpus CyberLock Final - URL Dynamic Spreadsheet Fix</title>
+  <title>Cikpus CyberLock Lite</title>
+
   <link rel="preconnect" href="https://docs.google.com">
   <link rel="preconnect" href="https://accounts.google.com">
   <link rel="dns-prefetch" href="https://docs.google.com">
@@ -13,7 +14,9 @@
     * { box-sizing: border-box; }
 
     :root {
-      /* UBAH UKURAN ZONA KANAN DI SINI */
+      /* Ukuran zona pengawasan kanan.
+         50vw = 50% layar kanan
+         60vw = 60% layar kanan */
       --zona-kanan: 60vw;
     }
 
@@ -36,7 +39,7 @@
     body.exam-mode {
       height: 100vh;
       overflow: hidden;
-      background: #ffffff;
+      background: #fff;
     }
 
     body.secure-blur #exam-area {
@@ -50,7 +53,6 @@
       align-items: flex-start;
       justify-content: center;
       padding: 14px;
-      overflow-y: auto;
       background:
         radial-gradient(circle at top, rgba(0,255,170,.16), transparent 35%),
         linear-gradient(135deg, #06101f, #0a1730 60%, #050815);
@@ -77,17 +79,8 @@
       text-shadow: 0 0 12px rgba(0,255,170,.45);
     }
 
-    .sub-title {
-      margin-top: 6px;
-      margin-bottom: 8px;
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      color: #00d2ff;
-    }
-
     .anti-cheat-title {
-      margin: 0 0 14px;
+      margin: 6px 0 8px;
       color: #ff3344;
       font-size: 16px;
       font-weight: 900;
@@ -98,8 +91,16 @@
     }
 
     @keyframes antiCheatPulse {
-      from { opacity: .78; transform: scale(.99); }
+      from { opacity: .80; transform: scale(.99); }
       to { opacity: 1; transform: scale(1.02); }
+    }
+
+    .sub-title {
+      margin: 0 0 14px;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #00d2ff;
     }
 
     .alert-box {
@@ -165,30 +166,8 @@
       margin-top: 12px;
     }
 
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 10px;
-      padding: 14px;
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: .3px;
-      cursor: pointer;
-      text-transform: uppercase;
-    }
-
-    button:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-    }
-
-    .btn-primary { color: #06101f; background: #00ffaa; }
-    .btn-secondary { color: white; background: #1463ff; }
-    .btn-danger { color: white; background: #ff3344; }
-    .btn-dark { color: white; background: #1f2a44; }
-
-    .btn-link-google {
-      display: block;
+    button,
+    .btn-link {
       width: 100%;
       border: none;
       border-radius: 10px;
@@ -200,13 +179,18 @@
       text-transform: uppercase;
       text-decoration: none;
       text-align: center;
-      color: white;
-      background: #1463ff;
+      display: block;
     }
 
-    .btn-link-google:active {
-      transform: scale(.99);
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
     }
+
+    .btn-primary { color: #06101f; background: #00ffaa; }
+    .btn-secondary, .btn-link { color: white; background: #1463ff; }
+    .btn-danger { color: white; background: #ff3344; }
+    .btn-dark { color: white; background: #1f2a44; }
 
     .checklist {
       text-align: left;
@@ -275,7 +259,7 @@
       align-items: center;
       justify-content: flex-end;
       gap: 5px;
-      max-width: 42%;
+      max-width: 44%;
     }
 
     .btn-finish {
@@ -333,11 +317,6 @@
       background: rgba(255, 0, 0, 0.10);
     }
 
-    #right-touch-guard::after {
-      content: "";
-      display: none;
-    }
-
     #camera-monitor {
       position: fixed;
       right: 10px;
@@ -385,12 +364,6 @@
       font-weight: 900;
       text-align: center;
       box-shadow: 0 8px 28px rgba(0,0,0,.30);
-      animation: zoneWarningPulse .65s infinite alternate;
-    }
-
-    @keyframes zoneWarningPulse {
-      from { opacity: .86; transform: translateX(-50%) scale(.98); }
-      to { opacity: 1; transform: translateX(-50%) scale(1.02); }
     }
 
     #copy-indicator {
@@ -409,12 +382,6 @@
       font-weight: bold;
       text-align: center;
       box-shadow: 0 8px 28px rgba(0,0,0,.28);
-      animation: indicatorPulse .7s infinite alternate;
-    }
-
-    @keyframes indicatorPulse {
-      from { opacity: .82; }
-      to { opacity: 1; }
     }
 
     #lock-overlay {
@@ -518,7 +485,7 @@
       .panel { margin-top: 6px; padding: 16px; }
       .main-title { font-size: 20px; }
       .alert-box, .info-box { font-size: 12.5px; padding: 10px; margin: 10px 0; }
-      button { padding: 12px; }
+      button, .btn-link { padding: 12px; }
     }
   </style>
 </head>
@@ -528,19 +495,19 @@
     <div class="panel" id="panel-konten">
       <h1 class="main-title">CIKPUS CYBERLOCK</h1>
       <div class="anti-cheat-title">Ujian Anti Curang !</div>
-      <div class="sub-title">SMARTPHONE SECURE MODE - GOOGLE FORM</div>
+      <div class="sub-title">LITE STABLE MODE - GOOGLE FORM</div>
 
       <div class="alert-box">
         <b>PERINGATAN UJIAN:</b><br><br>
         1. Gunakan 1 smartphone dan login email Google sebelum mulai.<br>
         2. Isi identitas, jawab soal, dan isi pernyataan tidak menyontek dengan jujur.<br>
         3. Gunakan hanya bagian kiri layar untuk scroll dan menjawab soal.<br>
-        4. Area kanan layar adalah zona pengawasan tersembunyi; sentuhan pertama diberi peringatan, sentuhan berikutnya dikunci.<br>
-        5. Dilarang membuka Google, tab/aplikasi lain, split screen, screenshot, atau keluar dari halaman ujian.
+        4. Area kanan adalah zona pengawasan; sentuhan pertama diberi peringatan, berikutnya dikunci.<br>
+        5. Dilarang membuka Google, tab/aplikasi lain, split screen, screenshot, atau keluar halaman ujian.
       </div>
 
       <div class="info-box">
-        Setelah klik <b>Mulai Ujian</b>, kamera, layar penuh, dan zona pengawasan kanan akan aktif sampai siswa klik <b>Selesai</b>. Jika HP otomatis berubah landscape saat fullscreen, sistem akan menyesuaikan dan tidak langsung mengunci.
+        Sistem memakai Google Spreadsheet. Format: Kolom A Nama Mapel, Kolom B Kode Ujian, Kolom C Link Google Form.
       </div>
 
       <div class="form-group">
@@ -551,7 +518,7 @@
       <div class="status-text" id="status-text">Menghubungkan ke Google Spreadsheet...</div>
 
       <div class="btn-row">
-        <a class="btn-link-google" href="https://accounts.google.com/" target="_blank" rel="noopener noreferrer">Login Email Google Dulu</a>
+        <a class="btn-link" href="https://accounts.google.com/" target="_blank" rel="noopener noreferrer">Login Email Google Dulu</a>
         <button class="btn-dark" type="button" onclick="refreshDatabaseManual()">Muat Ulang Database</button>
         <button class="btn-primary" id="btn-mulai" onclick="inisialisasiAplikasi()" disabled>Memuat Ujian...</button>
       </div>
@@ -561,7 +528,7 @@
       </div>
 
       <div class="small-note">
-        Format Spreadsheet: Kolom A Nama Mapel, Kolom B Kode Ujian, Kolom C Link Google Form. Sistem memakai cache global agar lebih cepat. Pastikan sudah Publish to Web.
+        Setelah database terbaca, mapel berikutnya lebih cepat karena memakai cache.
       </div>
     </div>
   </div>
@@ -616,37 +583,15 @@
     // ============================================================
     const SPREADSHEET_ID = "15GoVqOmE7EGDcY3yAFFSak425ztbaVuQ_wjZPkH_GRE";
     const SHEET_GID = "0";
+
     const TOKEN_PENGAWAS = "GURUOTIB";
     const TOKEN_UJI_COBA = "UJIOTIB";
 
     const MODE_KETAT = true;
     const BATAS_PERINGATAN_ZONA_KANAN = 1;
 
-    // Database tetap memakai Google Spreadsheet.
-    // Sistem dibuat cache-first agar lebih cepat:
-    // 1. Pakai cache browser lebih dulu jika ada.
-    // 2. Refresh data Spreadsheet di belakang layar.
-    // 3. Jika belum ada cache, ambil dari Spreadsheet dengan jalur paralel.
-    const GUNAKAN_DATABASE_LOKAL = false;
-
-    const DATABASE_LOKAL = [
-      /*
-      Contoh agar pembukaan ujian super cepat tanpa menunggu Spreadsheet:
-      {
-        namaMapel: "Informatika",
-        kode: "INFO",
-        link: "https://docs.google.com/forms/d/e/xxxxxxxx/viewform"
-      },
-      {
-        namaMapel: "Matematika",
-        kode: "MTK",
-        link: "https://docs.google.com/forms/d/e/yyyyyyyy/viewform"
-      }
-      */
-    ];
-
-    const DATABASE_CACHE_TTL = 60 * 60 * 1000; // 1 jam, cukup cepat tetapi tetap cukup akurat // 6 jam // 24 jam
-    const DATABASE_FETCH_TIMEOUT = 5000; // 5 detik agar tidak mengganggu siswa // 6 detik // 4,5 detik supaya tidak menggantung lama
+    const DATABASE_CACHE_TTL = 60 * 60 * 1000; // 1 jam
+    const DATABASE_FETCH_TIMEOUT = 5500; // 5,5 detik
 
     const SESSION_API_URL = "";
 
@@ -664,28 +609,16 @@
       return "";
     }
 
-    let kodeUjian = ambilKodeUjianDariURL();
-
+    const kodeUjian = ambilKodeUjianDariURL();
     const tabId = buatIdUnik();
     const deviceId = ambilAtauBuatDeviceId();
-    let storagePrefix = "";
-    let KEY_ACTIVE = "";
-    let KEY_BREACH = "";
-    let KEY_LOG = "";
-    let KEY_CACHE = "";
-    let KEY_CACHE_GLOBAL = `cyberlock_global_database_cache_${SPREADSHEET_ID}_${SHEET_GID}`;
-    let KEY_TOKEN_UJI_COBA_USED = "";
 
-    function perbaruiKeyPenyimpanan() {
-      storagePrefix = `cyberlock_smartphone_${kodeUjian || "default"}`;
-      KEY_ACTIVE = `${storagePrefix}_active_session`;
-      KEY_BREACH = `${storagePrefix}_breach`;
-      KEY_LOG = `${storagePrefix}_last_log`;
-      KEY_CACHE = `${storagePrefix}_database_cache`;
-      KEY_TOKEN_UJI_COBA_USED = `${storagePrefix}_token_uji_coba_used`;
-    }
-
-    perbaruiKeyPenyimpanan();
+    const storagePrefix = `cyberlock_lite_${kodeUjian || "default"}`;
+    const KEY_ACTIVE = `${storagePrefix}_active_session`;
+    const KEY_BREACH = `${storagePrefix}_breach`;
+    const KEY_LOG = `${storagePrefix}_last_log`;
+    const KEY_CACHE_GLOBAL = `cyberlock_lite_database_cache_${SPREADSHEET_ID}_${SHEET_GID}`;
+    const KEY_TOKEN_UJI_COBA_USED = `${storagePrefix}_token_uji_coba_used`;
 
     let peserta = "";
     let examAktif = false;
@@ -695,29 +628,21 @@
     let lokalStream = null;
 
     let heartbeatInterval = null;
-    let remoteHeartbeatInterval = null;
     let cameraCheckInterval = null;
     let screenCheckInterval = null;
-    let securityCheckInterval = null;
     let clockInterval = null;
     let durationInterval = null;
-    let orientationCheckInterval = null;
     let examStartedAt = 0;
     let abaikanCekLayarSampai = 0;
 
     let channel = null;
     let sistemSedangUnlock = false;
-    let formLoadCount = 0;
-    let tombolSelesaiAktif = false;
     let jumlahPelanggaran = 0;
     let ukuranAwal = null;
-    let layarAwalProteksi = null;
     let fokusHilangTimer = null;
     let longPressTimer = null;
     let touchStartX = 0;
     let touchStartY = 0;
-    let touchStartTime = 0;
-    let sessionId = "";
     let databaseSiap = false;
 
     let guardTouchStartX = 0;
@@ -732,9 +657,6 @@
     // LOAD AWAL
     // ============================================================
     window.addEventListener("load", async () => {
-      kodeUjian = ambilKodeUjianDariURL();
-      perbaruiKeyPenyimpanan();
-      mulaiPantauPerubahanURL();
       mulaiJamTanggal();
       siapkanKomunikasiAntarTab();
       updateChecklist();
@@ -762,124 +684,34 @@
       await loadDatabaseUjian();
     });
 
-
-    function refreshDatabaseManual() {
-      const kodeBaru = ambilKodeUjianDariURL();
-
-      if (!kodeBaru) {
-        alert("Kode ujian belum ada di URL. Contoh: ?ID=INFO");
-        return;
-      }
-
-      kodeUjian = kodeBaru;
-      perbaruiKeyPenyimpanan();
-      localStorage.removeItem(KEY_CACHE);
-      sessionStorage.removeItem(KEY_CACHE_GLOBAL);
-
-      ubahStatus("Memuat ulang Google Spreadsheet...");
-      loadDatabaseUjian();
-    }
-
-    function mulaiPantauPerubahanURL() {
-      let urlTerakhir = window.location.href;
-
-      setInterval(() => {
-        if (window.location.href !== urlTerakhir) {
-          urlTerakhir = window.location.href;
-
-          const kodeBaru = ambilKodeUjianDariURL();
-
-          if (kodeBaru && kodeBaru !== kodeUjian) {
-            kodeUjian = kodeBaru;
-            perbaruiKeyPenyimpanan();
-            loadDatabaseUjian();
-          }
-        }
-      }, 600);
-
-      window.addEventListener("popstate", () => {
-        const kodeBaru = ambilKodeUjianDariURL();
-        if (kodeBaru && kodeBaru !== kodeUjian) {
-          kodeUjian = kodeBaru;
-          perbaruiKeyPenyimpanan();
-          loadDatabaseUjian();
-        }
-      });
-
-      window.addEventListener("pageshow", () => {
-        const kodeBaru = ambilKodeUjianDariURL();
-        if (kodeBaru && kodeBaru !== kodeUjian) {
-          kodeUjian = kodeBaru;
-          perbaruiKeyPenyimpanan();
-          loadDatabaseUjian();
-        }
-      });
-    }
-
     // ============================================================
-    // DATABASE CEPAT
+    // DATABASE SPREADSHEET RINGKAS
     // ============================================================
-
-    function resetStatusDatabaseUntukKodeBaru() {
-      databaseSiap = false;
-      linkGoogleForm = "";
-      namaMapel = "";
-      formLoadCount = 0;
-
-      const btn = document.getElementById("btn-mulai");
-      if (btn) {
-        btn.disabled = true;
-        btn.innerText = "Memuat Ujian...";
-      }
-
-      document.getElementById("exam-code-label").innerText = `KODE: ${kodeUjian.toUpperCase()}`;
-      updateChecklist();
-    }
     async function loadDatabaseUjian() {
-      resetStatusDatabaseUntukKodeBaru();
-
-      const dataLokal = ambilDariDatabaseLokal();
-
-      if (dataLokal) {
-        setDataUjian(dataLokal, "database lokal");
-        aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Data lokal digunakan, lebih cepat.`);
-        return;
-      }
+      resetStatusDatabase();
 
       const cache = ambilCacheDatabase();
-
       if (cache) {
-        const databaseCache = buatDatabaseDariCSV(cache.csvText);
-        const dataCache = databaseCache.get(kodeUjian);
+        const dbCache = buatDatabaseDariCSV(cache.csvText);
+        const dataCache = dbCache.get(kodeUjian);
 
         if (dataCache && dataCache.link) {
           setDataUjian(dataCache, "cache");
-          aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Data cache global digunakan agar lebih cepat.`);
+          aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Data cache digunakan agar lebih cepat.`);
           fetchDatabaseTerbaru(false);
           return;
         }
       }
 
-      ubahStatus("Menghubungkan ke Google Spreadsheet... Jika pernah dibuka, cache akan dipakai otomatis.");
+      ubahStatus("Menghubungkan ke Google Spreadsheet...");
       await fetchDatabaseTerbaru(true);
     }
 
-    function ambilDariDatabaseLokal() {
-      if (!GUNAKAN_DATABASE_LOKAL || !Array.isArray(DATABASE_LOKAL) || DATABASE_LOKAL.length === 0) {
-        return null;
-      }
-
-      const item = DATABASE_LOKAL.find(row => {
-        return String(row.kode || "").trim().toLowerCase() === kodeUjian;
-      });
-
-      if (!item || !item.link) return null;
-
-      return {
-        namaMapel: item.namaMapel || item.nama || kodeUjian.toUpperCase(),
-        kode: kodeUjian,
-        link: item.link
-      };
+    async function refreshDatabaseManual() {
+      sessionStorage.removeItem(KEY_CACHE_GLOBAL);
+      localStorage.removeItem(KEY_CACHE_GLOBAL);
+      ubahStatus("Memuat ulang Google Spreadsheet...");
+      await fetchDatabaseTerbaru(true);
     }
 
     async function fetchDatabaseTerbaru(tampilkanErrorJikaGagal = true) {
@@ -892,11 +724,6 @@
         ];
 
         const csvText = await ambilCSVTercepat(daftarURL);
-
-        if (!csvText || !csvText.includes(",")) {
-          throw new Error("Database kosong atau tidak valid.");
-        }
-
         simpanCacheDatabase(csvText);
 
         const database = buatDatabaseDariCSV(csvText);
@@ -906,43 +733,35 @@
           if (tampilkanErrorJikaGagal) {
             tampilkanError(
               "KODE TIDAK DITEMUKAN",
-              `Kode "${kodeUjian.toUpperCase()}" tidak ada di Spreadsheet. Pastikan kolom A Nama Mapel, kolom B Kode Ujian, kolom C Link Google Form, dan Spreadsheet sudah Publish to Web.`
+              `Kode "${kodeUjian.toUpperCase()}" tidak ada di Spreadsheet. Pastikan kolom A Nama Mapel, kolom B Kode Ujian, kolom C Link Google Form.`
             );
           }
           return;
         }
 
         setDataUjian(dataUjian, "spreadsheet");
-        aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Login email Google dulu, lalu klik Mulai Ujian.`);
+        aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Silakan login email Google, lalu klik Mulai Ujian.`);
       } catch (error) {
-        const cache = ambilCacheDatabase(true);
+        const cacheLama = ambilCacheDatabase(true);
 
-        if (cache) {
-          const databaseCache = buatDatabaseDariCSV(cache.csvText);
-          const dataCache = databaseCache.get(kodeUjian);
+        if (cacheLama) {
+          const dbCache = buatDatabaseDariCSV(cacheLama.csvText);
+          const dataCache = dbCache.get(kodeUjian);
 
           if (dataCache && dataCache.link) {
             setDataUjian(dataCache, "cache lama");
-            aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Memakai data terakhir karena database lambat.`);
+            aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Memakai data terakhir karena Spreadsheet lambat.`);
             return;
           }
         }
 
         if (tampilkanErrorJikaGagal) {
           tampilkanError(
-            "DATABASE LAMBAT / ERROR",
-            "Google Spreadsheet belum terbaca. Periksa koneksi internet, Publish to Web, dan pastikan kolom A Nama Mapel, kolom B Kode, kolom C Link Google Form."
+            "DATABASE BELUM TERSAMBUNG",
+            "Google Spreadsheet belum terbaca. Pastikan Spreadsheet sudah Publish to Web, koneksi stabil, dan format kolom A-B-C benar."
           );
         }
       }
-    }
-
-    function setDataUjian(data, sumber) {
-      namaMapel = data.namaMapel || data.nama || kodeUjian.toUpperCase();
-      linkGoogleForm = ubahKeEmbedGoogleForm(data.link);
-      databaseSiap = true;
-      tampilkanNamaMapel();
-      console.log("Data ujian dari:", sumber);
     }
 
     function ambilCSVTercepat(daftarURL) {
@@ -959,14 +778,12 @@
           }
         }, DATABASE_FETCH_TIMEOUT);
 
-        daftarURL.forEach((url, index) => {
+        daftarURL.forEach(url => {
           const controller = new AbortController();
           controllers.push(controller);
 
           fetch(url, {
             method: "GET",
-            // no-store dipakai agar data Spreadsheet lebih akurat,
-            // sedangkan kecepatan tetap dibantu oleh localStorage/sessionStorage cache.
             cache: "no-store",
             signal: controller.signal
           })
@@ -976,16 +793,11 @@
           })
           .then(text => {
             if (selesai) return;
-
             const isi = String(text || "").trim();
-            if (!isi || !isi.includes(",")) {
-              throw new Error("CSV tidak valid.");
-            }
+            if (!isi || !isi.includes(",")) throw new Error("CSV tidak valid.");
 
-            const databaseTest = buatDatabaseDariCSV(isi);
-            if (!databaseTest.size) {
-              throw new Error("CSV tidak berisi data ujian.");
-            }
+            const db = buatDatabaseDariCSV(isi);
+            if (!db.size) throw new Error("CSV tidak berisi data.");
 
             selesai = true;
             clearTimeout(timeoutGlobal);
@@ -997,11 +809,33 @@
             if (!selesai && gagal >= daftarURL.length) {
               selesai = true;
               clearTimeout(timeoutGlobal);
-              reject(new Error("Semua URL database gagal."));
+              reject(new Error("Semua jalur database gagal."));
             }
           });
         });
       });
+    }
+
+    function resetStatusDatabase() {
+      databaseSiap = false;
+      linkGoogleForm = "";
+      namaMapel = "";
+
+      const btn = document.getElementById("btn-mulai");
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "Memuat Ujian...";
+      }
+
+      updateChecklist();
+    }
+
+    function setDataUjian(data, sumber) {
+      namaMapel = data.namaMapel || kodeUjian.toUpperCase();
+      linkGoogleForm = ubahKeEmbedGoogleForm(data.link);
+      databaseSiap = true;
+      tampilkanNamaMapel();
+      console.log("Data ujian dari:", sumber);
     }
 
     function aktifkanTombolMulai(pesan) {
@@ -1024,7 +858,7 @@
       }
 
       if (!databaseSiap || !linkGoogleForm) {
-        alert("Database ujian belum siap. Tunggu beberapa saat.");
+        alert("Database ujian belum siap. Klik Muat Ulang Database atau tunggu beberapa saat.");
         return;
       }
 
@@ -1038,10 +872,6 @@
 
       try {
         await mintaIzinKamera();
-
-        const bolehMulai = await mulaiSessionServerOpsional();
-        if (!bolehMulai) return;
-
         mulaiUjian();
       } catch (error) {
         alert("Kamera wajib diaktifkan untuk mengikuti ujian.");
@@ -1063,12 +893,10 @@
       mulaiHeartbeat();
       mulaiCekKamera();
       mulaiCekLayar();
-      aktifkanToleransiPerubahanLayar(3000);
-      mulaiProteksiSmartphone();
       mulaiDurasiUjian();
       aktifkanZonaKananPengawas();
       perbaruiWatermark();
-      siapkanDeteksiSubmitForm();
+      siapkanTombolSelesai();
 
       document.getElementById("ujian-frame").src = linkGoogleForm;
 
@@ -1076,12 +904,7 @@
 
       setTimeout(() => {
         simpanUkuranAwalLayar();
-        simpanUkuranAwalProteksi();
       }, 1300);
-    }
-
-    function bukaLoginGoogle() {
-      window.location.href = "https://accounts.google.com/";
     }
 
     function masukFullscreen() {
@@ -1093,26 +916,18 @@
         elem.requestFullscreen()
           .then(() => {
             aktifkanToleransiPerubahanLayar(2500);
-            setTimeout(() => {
-              simpanUkuranAwalLayar();
-              simpanUkuranAwalProteksi();
-            }, 1200);
+            setTimeout(simpanUkuranAwalLayar, 1200);
           })
           .catch(() => {});
       } else if (elem.webkitRequestFullscreen) {
         elem.webkitRequestFullscreen();
         aktifkanToleransiPerubahanLayar(2500);
-        setTimeout(() => {
-          simpanUkuranAwalLayar();
-          simpanUkuranAwalProteksi();
-        }, 1200);
+        setTimeout(simpanUkuranAwalLayar, 1200);
       }
     }
 
     function aktifkanToleransiPerubahanLayar(ms = 2500) {
       abaikanCekLayarSampai = Date.now() + ms;
-    }
-      } catch (e) {}
     }
 
     // ============================================================
@@ -1155,38 +970,27 @@
         if (!tracks.length || tracks[0].readyState !== "live" || tracks[0].muted) {
           prosesPelanggaran("Kamera terputus atau dimatikan saat ujian berlangsung.");
         }
-      }, 2000);
+      }, 2500);
     }
 
     // ============================================================
-    // GOOGLE FORM 3 BAGIAN
+    // TOMBOL SELESAI GOOGLE FORM
     // ============================================================
-    function siapkanDeteksiSubmitForm() {
+    function siapkanTombolSelesai() {
       const iframe = document.getElementById("ujian-frame");
       const btnSelesai = document.getElementById("btn-selesai-ujian");
 
-      formLoadCount = 0;
-      tombolSelesaiAktif = true;
       btnSelesai.style.display = "inline-block";
       btnSelesai.disabled = false;
       btnSelesai.innerText = "Selesai";
 
-      iframe.onload = function() {
-        if (!examAktif || statusTerkunci) return;
-        formLoadCount++;
-      };
+      iframe.onload = function() {};
     }
 
     function selesaikanUjian() {
-      if (!tombolSelesaiAktif) {
-        alert("Tombol selesai belum aktif.");
-        return;
-      }
-
       const durasi = formatDurasi(Date.now() - examStartedAt);
       const yakin = confirm(`Pastikan jawaban sudah terkirim. Durasi pengerjaan: ${durasi}. Akhiri ujian sekarang?`);
       if (!yakin) return;
-
       akhiriSesiUjian();
     }
 
@@ -1201,17 +1005,13 @@
       localStorage.removeItem(KEY_ACTIVE);
 
       if (heartbeatInterval) clearInterval(heartbeatInterval);
-      if (remoteHeartbeatInterval) clearInterval(remoteHeartbeatInterval);
       if (cameraCheckInterval) clearInterval(cameraCheckInterval);
       if (screenCheckInterval) clearInterval(screenCheckInterval);
-      if (securityCheckInterval) clearInterval(securityCheckInterval);
+      if (clockInterval) clearInterval(clockInterval);
       if (durationInterval) clearInterval(durationInterval);
-      if (orientationCheckInterval) clearInterval(orientationCheckInterval);
       if (fokusHilangTimer) clearTimeout(fokusHilangTimer);
       if (longPressTimer) clearTimeout(longPressTimer);
       if (guardLongPressTimer) clearTimeout(guardLongPressTimer);
-
-      tutupSessionServerOpsional();
 
       if (lokalStream) {
         lokalStream.getTracks().forEach(track => track.stop());
@@ -1241,8 +1041,9 @@
 
       sistemSedangUnlock = false;
     }
+
     // ============================================================
-    // DURASI UJIAN
+    // DURASI
     // ============================================================
     function mulaiDurasiUjian() {
       if (durationInterval) clearInterval(durationInterval);
@@ -1261,18 +1062,14 @@
       const jam = Math.floor(totalDetik / 3600);
       const menit = Math.floor((totalDetik % 3600) / 60);
       const detik = totalDetik % 60;
-
       const mm = String(menit).padStart(2, "0");
       const ss = String(detik).padStart(2, "0");
-
       if (jam > 0) return `${jam}:${mm}:${ss}`;
       return `${mm}:${ss}`;
     }
 
-    }
-
     // ============================================================
-    // ZONA KANAN PENGAWAS SMARTPHONE
+    // ZONA KANAN
     // ============================================================
     function aktifkanZonaKananPengawas() {
       const guard = document.getElementById("right-touch-guard");
@@ -1318,7 +1115,7 @@
 
         if (!guardGestureSudahDiproses && (geserX > 16 || geserY > 16)) {
           guardGestureSudahDiproses = true;
-          prosesZonaKananDenganToleransi("Gerakan di zona kanan terdeteksi. Saat ujian hanya boleh scroll soal di area kiri.");
+          prosesZonaKananDenganToleransi("Gerakan di zona kanan terdeteksi.");
         }
       }, { passive: false });
 
@@ -1334,24 +1131,16 @@
         }
 
         const lamaSentuh = Date.now() - guardTouchStartTime;
-
         if (!guardGestureSudahDiproses && lamaSentuh >= 40) {
           guardGestureSudahDiproses = true;
           prosesZonaKananDenganToleransi("Sentuhan di zona kanan terdeteksi.");
         }
       }, { passive: false });
 
-      guard.addEventListener("mousedown", function(event) {
-        if (!examAktif || statusTerkunci) return;
-        event.preventDefault();
-        event.stopPropagation();
-        prosesZonaKananDenganToleransi("Klik di zona kanan terdeteksi.");
-      });
-
       guard.addEventListener("contextmenu", function(event) {
         event.preventDefault();
         if (examAktif && !statusTerkunci) {
-          prosesZonaKananDenganToleransi("Klik kanan / tekan lama di zona kanan terdeteksi.");
+          prosesZonaKananDenganToleransi("Tekan lama di zona kanan terdeteksi.");
         }
       });
     }
@@ -1362,33 +1151,25 @@
       jumlahSentuhanZonaKanan++;
 
       if (jumlahSentuhanZonaKanan <= BATAS_PERINGATAN_ZONA_KANAN) {
-        tampilPeringatanZonaKanan(
-          "PERINGATAN 1: Area kanan adalah zona pengawasan. Gunakan area kiri untuk scroll dan menjawab soal. Jika terulang, ujian akan dikunci."
-        );
-
+        tampilPeringatanZonaKanan("PERINGATAN 1: Area kanan adalah zona pengawasan. Gunakan area kiri untuk scroll dan menjawab soal. Jika terulang, ujian dikunci.");
         document.getElementById("offense-label").innerText = `ZONA: ${jumlahSentuhanZonaKanan}`;
         masukFullscreen();
         return;
       }
 
       tampilIndikator("Zona kanan disentuh kembali");
-      prosesPelanggaran(`${alasan} Peringatan zona kanan sudah diberikan sebelumnya.`);
+      prosesPelanggaran(`${alasan} Peringatan zona kanan sudah diberikan.`);
     }
 
     function tampilPeringatanZonaKanan(teks) {
       const warning = document.getElementById("zone-warning");
-      if (!warning) return;
-
       warning.innerText = teks;
       warning.style.display = "block";
-
-      setTimeout(() => {
-        warning.style.display = "none";
-      }, 4500);
+      setTimeout(() => { warning.style.display = "none"; }, 4500);
     }
 
     // ============================================================
-    // PROTEKSI SMARTPHONE: TAB, POPUP, SPLIT SCREEN, GOOGLE SEARCH
+    // PROTEKSI INTI
     // ============================================================
     document.addEventListener("visibilitychange", () => {
       if (examAktif && document.hidden && !statusTerkunci) {
@@ -1422,41 +1203,28 @@
       }
     }
 
-    function mulaiProteksiSmartphone() {
-      simpanUkuranAwalProteksi();
+    function mulaiCekLayar() {
+      if (screenCheckInterval) clearInterval(screenCheckInterval);
 
-      if (securityCheckInterval) clearInterval(securityCheckInterval);
-      securityCheckInterval = setInterval(() => cekKeamananLayar("Pemeriksaan berkala"), 1000);
+      screenCheckInterval = setInterval(cekLayarTerbagi, 2500);
 
       window.addEventListener("resize", () => {
-        setTimeout(() => cekKeamananLayar("Ukuran layar berubah"), 500);
+        aktifkanToleransiPerubahanLayar(1800);
+        setTimeout(simpanUkuranAwalLayar, 1500);
       });
 
       window.addEventListener("orientationchange", () => {
-        aktifkanToleransiPerubahanLayar(3500);
-
-        setTimeout(() => {
-          simpanUkuranAwalLayar();
-          simpanUkuranAwalProteksi();
-        }, 1500);
+        aktifkanToleransiPerubahanLayar(3000);
+        setTimeout(simpanUkuranAwalLayar, 1600);
       });
-
-      if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", () => {
-          setTimeout(() => cekKeamananLayar("Visual viewport berubah"), 500);
-        });
-      }
 
       window.addEventListener("blur", () => {
         if (!examAktif || statusTerkunci) return;
-
         clearTimeout(fokusHilangTimer);
 
         fokusHilangTimer = setTimeout(() => {
           if (!examAktif || statusTerkunci) return;
-
           const fullscreenAktif = document.fullscreenElement || document.webkitFullscreenElement;
-
           if (document.hidden || !fullscreenAktif || layarMengecilMencurigakan()) {
             prosesPelanggaran("Popup, tab, split screen, atau aplikasi lain terdeteksi.");
           }
@@ -1468,30 +1236,19 @@
       });
     }
 
-    function simpanUkuranAwalProteksi() {
-      layarAwalProteksi = {
-        width: window.innerWidth,
-        height: window.innerHeight,
+    function simpanUkuranAwalLayar() {
+      ukuranAwal = {
         screenWidth: window.screen.availWidth || window.screen.width,
         screenHeight: window.screen.availHeight || window.screen.height
       };
     }
 
-    function cekKeamananLayar(alasan) {
-      if (!examAktif || statusTerkunci || !layarAwalProteksi) return;
+    function cekLayarTerbagi() {
+      if (!examAktif || statusTerkunci || !ukuranAwal) return;
       if (Date.now() < abaikanCekLayarSampai) return;
 
       const fullscreenAktif = document.fullscreenElement || document.webkitFullscreenElement;
-
-      if (!fullscreenAktif) {
-        prosesPelanggaran("Keluar dari layar penuh. Indikasi membuka aplikasi/tab lain.");
-        return;
-      }
-
-      if (document.hidden) {
-        prosesPelanggaran("Halaman ujian tidak aktif. Indikasi membuka tab/aplikasi lain.");
-        return;
-      }
+      if (!fullscreenAktif) return;
 
       if (layarMengecilMencurigakan()) {
         prosesPelanggaran("Split screen, popup, atau layar ujian mengecil terdeteksi.");
@@ -1499,10 +1256,10 @@
     }
 
     function layarMengecilMencurigakan() {
-      if (!layarAwalProteksi) return false;
+      if (!ukuranAwal) return false;
 
-      const screenWidth = window.screen.availWidth || window.screen.width || layarAwalProteksi.screenWidth;
-      const screenHeight = window.screen.availHeight || window.screen.height || layarAwalProteksi.screenHeight;
+      const screenWidth = window.screen.availWidth || window.screen.width || ukuranAwal.screenWidth;
+      const screenHeight = window.screen.availHeight || window.screen.height || ukuranAwal.screenHeight;
 
       const rasioLebar = window.innerWidth / screenWidth;
       const rasioTinggi = window.innerHeight / screenHeight;
@@ -1516,38 +1273,6 @@
       }
 
       return false;
-    }
-
-    function simpanUkuranAwalLayar() {
-      ukuranAwal = {
-        innerWidth: window.innerWidth,
-        innerHeight: window.innerHeight,
-        screenWidth: window.screen.availWidth || window.screen.width,
-        screenHeight: window.screen.availHeight || window.screen.height
-      };
-    }
-
-    function mulaiCekLayar() {
-      if (screenCheckInterval) clearInterval(screenCheckInterval);
-      screenCheckInterval = setInterval(cekLayarTerbagi, 2000);
-    }
-
-    function cekLayarTerbagi() {
-      if (!examAktif || statusTerkunci || !ukuranAwal) return;
-      if (Date.now() < abaikanCekLayarSampai) return;
-
-      const fullscreenAktif = document.fullscreenElement || document.webkitFullscreenElement;
-      if (!fullscreenAktif) return;
-
-      const screenWidth = window.screen.availWidth || window.screen.width || ukuranAwal.screenWidth;
-      const screenHeight = window.screen.availHeight || window.screen.height || ukuranAwal.screenHeight;
-
-      const rasioLebar = window.innerWidth / screenWidth;
-      const rasioTinggi = window.innerHeight / screenHeight;
-
-      if (rasioLebar < 0.82 || (rasioTinggi < 0.62 && rasioLebar < 0.98)) {
-        prosesPelanggaran("Layar ujian mengecil. Split screen atau layar terbagi terdeteksi.");
-      }
     }
 
     ["copy", "cut", "paste", "contextmenu", "dragstart", "selectstart"].forEach(evt => {
@@ -1566,7 +1291,6 @@
       const touch = event.touches[0];
       touchStartX = touch.clientX;
       touchStartY = touch.clientY;
-      touchStartTime = Date.now();
 
       clearTimeout(longPressTimer);
 
@@ -1574,7 +1298,7 @@
         if (!examAktif || statusTerkunci) return;
         tampilIndikator("Klik tahan terdeteksi");
         prosesPelanggaran("Klik tahan terdeteksi. Aktivitas ini tidak diperlukan saat ujian.");
-      }, 850);
+      }, 900);
     }, true);
 
     document.addEventListener("touchmove", function(event) {
@@ -1589,7 +1313,7 @@
         longPressTimer = null;
       }
 
-      if (geserX > 70 && geserX > geserY * 1.6) {
+      if (geserX > 75 && geserX > geserY * 1.7) {
         event.preventDefault();
         tampilIndikator("Geser kiri/kanan terdeteksi");
         prosesPelanggaran("Geser kiri/kanan terdeteksi. Saat ujian hanya boleh scroll atas-bawah.");
@@ -1603,49 +1327,11 @@
       }
     }, true);
 
-    document.addEventListener("keydown", function(event) {
-      const key = event.key.toUpperCase();
-      const ctrl = event.ctrlKey || event.metaKey;
-      const shift = event.shiftKey;
-      const alt = event.altKey;
-
-      const tombolTerlarang =
-        event.key === "F12" ||
-        event.key === "PrintScreen" ||
-        (ctrl && ["U", "S", "P", "A", "C", "X", "V", "R"].includes(key)) ||
-        (ctrl && ["L", "K", "T", "N", "W"].includes(key)) ||
-        (ctrl && event.key === "Tab") ||
-        (ctrl && shift && ["I", "J", "C", "K", "N"].includes(key)) ||
-        (alt && ["ARROWLEFT", "ARROWRIGHT", "TAB"].includes(key));
-
-      if (tombolTerlarang) {
-        event.preventDefault();
-
-        if (examAktif && !statusTerkunci) {
-          tampilIndikator("Shortcut terlarang terdeteksi");
-          prosesPelanggaran("Shortcut terlarang terdeteksi. Indikasi membuka pencarian, tab, screenshot, atau inspect.");
-        }
-
-        return false;
-      }
-    }, true);
-
-    document.addEventListener("keyup", function(event) {
-      if (event.key === "PrintScreen" && examAktif && !statusTerkunci) {
-        try { navigator.clipboard.writeText("Screenshot diblokir oleh sistem ujian."); } catch(e) {}
-        tampilIndikator("Percobaan screenshot terdeteksi");
-        prosesPelanggaran("Percobaan screenshot terdeteksi.");
-      }
-    }, true);
-
     function tampilIndikator(teks) {
       const indikator = document.getElementById("copy-indicator");
       indikator.innerText = teks;
       indikator.style.display = "block";
-
-      setTimeout(() => {
-        indikator.style.display = "none";
-      }, 2500);
+      setTimeout(() => { indikator.style.display = "none"; }, 2500);
     }
 
     function prosesPelanggaran(alasan) {
@@ -1684,7 +1370,6 @@
       }
 
       document.getElementById("camera-label").innerText = "TERKUNCI";
-      updateSessionServerOpsional("locked", alasan);
     }
 
     function bukaKunciUjian() {
@@ -1721,10 +1406,7 @@
       simpanSesiAktif();
       masukFullscreen();
 
-      setTimeout(() => {
-        simpanUkuranAwalLayar();
-        simpanUkuranAwalProteksi();
-      }, 1000);
+      setTimeout(simpanUkuranAwalLayar, 1000);
 
       mintaIzinKamera()
         .then(() => {
@@ -1737,7 +1419,7 @@
     }
 
     // ============================================================
-    // SESSION SATU TAB / SATU BROWSER
+    // SESSION
     // ============================================================
     window.addEventListener("storage", (event) => {
       if (!examAktif || statusTerkunci) return;
@@ -1756,18 +1438,14 @@
 
     function siapkanKomunikasiAntarTab() {
       if ("BroadcastChannel" in window) {
-        channel = new BroadcastChannel(`cyberlock_smartphone_channel_${kodeUjian || "default"}`);
+        channel = new BroadcastChannel(`cyberlock_lite_channel_${kodeUjian || "default"}`);
         channel.onmessage = (event) => {
           const data = event.data || {};
           if (!examAktif || statusTerkunci) return;
           if (data.from === tabId) return;
 
-          if (data.type === "DUPLICATE_TAB") {
-            prosesPelanggaran(data.reason || "Link ujian dibuka di tab lain.");
-          }
-
-          if (data.type === "LOCK") {
-            prosesPelanggaran(data.reason || "Sistem mendeteksi pelanggaran.");
+          if (data.type === "DUPLICATE_TAB" || data.type === "LOCK") {
+            prosesPelanggaran(data.reason || "Sistem mendeteksi tab lain.");
           }
         };
       }
@@ -1783,7 +1461,6 @@
         deviceId,
         kodeUjian,
         peserta,
-        startedAt: Date.now(),
         lastBeat: Date.now()
       };
       localStorage.setItem(KEY_ACTIVE, JSON.stringify(data));
@@ -1816,7 +1493,7 @@
         }
 
         simpanSesiAktif();
-      }, 1000);
+      }, 1200);
     }
 
     function buatIdUnik() {
@@ -1834,111 +1511,6 @@
       }
 
       return id;
-    }
-
-    // ============================================================
-    // OPSIONAL SERVER SESSION
-    // ============================================================
-    async function mulaiSessionServerOpsional() {
-      if (!SESSION_API_URL) return true;
-
-      try {
-        sessionId = buatIdUnik();
-
-        const payload = {
-          action: "start",
-          sessionId,
-          kodeUjian,
-          peserta,
-          deviceId,
-          tabId,
-          userAgent: navigator.userAgent,
-          waktu: new Date().toISOString()
-        };
-
-        const hasil = await kirimKeServer(payload);
-
-        if (hasil && hasil.allowed === false) {
-          alert(hasil.message || "Sesi ujian sudah aktif di perangkat lain.");
-          return false;
-        }
-
-        mulaiHeartbeatServerOpsional();
-        return true;
-      } catch (e) {
-        alert("Server sesi tidak bisa dihubungi. Hubungi pengawas.");
-        return false;
-      }
-    }
-
-    function mulaiHeartbeatServerOpsional() {
-      if (!SESSION_API_URL) return;
-      if (remoteHeartbeatInterval) clearInterval(remoteHeartbeatInterval);
-
-      remoteHeartbeatInterval = setInterval(async () => {
-        if (!examAktif) return;
-
-        try {
-          const hasil = await kirimKeServer({
-            action: "heartbeat",
-            sessionId,
-            kodeUjian,
-            peserta,
-            deviceId,
-            tabId,
-            status: statusTerkunci ? "locked" : "active",
-            fullscreen: !!(document.fullscreenElement || document.webkitFullscreenElement),
-            hidden: document.hidden,
-            width: window.innerWidth,
-            height: window.innerHeight,
-            waktu: new Date().toISOString()
-          });
-
-          if (hasil && hasil.lock === true && !statusTerkunci) {
-            prosesPelanggaran(hasil.reason || "Server mendeteksi sesi ganda atau pelanggaran.");
-          }
-        } catch (e) {}
-      }, 3000);
-    }
-
-    function updateSessionServerOpsional(status, alasan) {
-      if (!SESSION_API_URL) return;
-
-      kirimKeServer({
-        action: "status",
-        sessionId,
-        kodeUjian,
-        peserta,
-        deviceId,
-        tabId,
-        status,
-        alasan,
-        waktu: new Date().toISOString()
-      }).catch(() => {});
-    }
-
-    function tutupSessionServerOpsional() {
-      if (!SESSION_API_URL) return;
-
-      kirimKeServer({
-        action: "finish",
-        sessionId,
-        kodeUjian,
-        peserta,
-        deviceId,
-        tabId,
-        waktu: new Date().toISOString()
-      }).catch(() => {});
-    }
-
-    async function kirimKeServer(payload) {
-      const response = await fetch(SESSION_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
-      });
-
-      return await response.json();
     }
 
     // ============================================================
@@ -1982,39 +1554,27 @@
           gid: SHEET_GID,
           csvText
         };
-
         const json = JSON.stringify(data);
-
-        // Cache global membuat ujian mapel ke-2 dan ke-3 langsung cepat
-        // walaupun kode ujiannya berbeda.
-        localStorage.setItem(KEY_CACHE_GLOBAL, json);
-
-        // Cache per kode tetap disimpan sebagai cadangan.
-        localStorage.setItem(KEY_CACHE, json);
-
-        // Session cache paling cepat selama tab masih hidup.
         sessionStorage.setItem(KEY_CACHE_GLOBAL, json);
+        localStorage.setItem(KEY_CACHE_GLOBAL, json);
       } catch (e) {}
     }
 
     function ambilCacheDatabase(abaikanMasaBerlaku = false) {
-      const daftarKey = [KEY_CACHE_GLOBAL, KEY_CACHE];
+      const daftarSumber = [
+        () => sessionStorage.getItem(KEY_CACHE_GLOBAL),
+        () => localStorage.getItem(KEY_CACHE_GLOBAL)
+      ];
 
-      try {
-        const sessionRaw = sessionStorage.getItem(KEY_CACHE_GLOBAL);
-        if (sessionRaw) {
-          const sessionData = JSON.parse(sessionRaw);
-          if (cacheMasihValid(sessionData, abaikanMasaBerlaku)) return sessionData;
-        }
-      } catch (e) {}
-
-      for (const key of daftarKey) {
+      for (const getRaw of daftarSumber) {
         try {
-          const raw = localStorage.getItem(key);
+          const raw = getRaw();
           if (!raw) continue;
 
           const data = JSON.parse(raw);
-          if (cacheMasihValid(data, abaikanMasaBerlaku)) return data;
+          if (!cacheMasihValid(data, abaikanMasaBerlaku)) continue;
+
+          return data;
         } catch (e) {}
       }
 
@@ -2023,26 +1583,16 @@
 
     function cacheMasihValid(data, abaikanMasaBerlaku = false) {
       if (!data || !data.csvText || !data.savedAt) return false;
-
       if (data.spreadsheetId && data.spreadsheetId !== SPREADSHEET_ID) return false;
       if (data.gid && data.gid !== SHEET_GID) return false;
 
       const umurCache = Date.now() - data.savedAt;
       if (!abaikanMasaBerlaku && umurCache > DATABASE_CACHE_TTL) return false;
 
-      // Cache hanya dianggap valid jika CSV memang berisi kode yang sedang dibuka.
-      try {
-        const db = buatDatabaseDariCSV(data.csvText);
-        const dataUjian = db.get(kodeUjian);
-        if (!dataUjian || !dataUjian.link) return false;
-      } catch (e) {
-        return false;
-      }
+      const db = buatDatabaseDariCSV(data.csvText);
+      const dataUjian = db.get(kodeUjian);
 
-      return true;
-    } catch (e) {
-        return null;
-      }
+      return !!(dataUjian && dataUjian.link);
     }
 
     function buatDatabaseDariCSV(csvText) {
@@ -2073,8 +1623,7 @@
           continue;
         }
 
-        // Kompatibel dengan format lama:
-        // Kolom A = Kode, Kolom B = Link
+        // Format lama: Kolom A = Kode, Kolom B = Link
         if (!link && kolomB.includes("docs.google.com/forms")) {
           nama = kolomA;
           kode = kolomA;
@@ -2165,7 +1714,7 @@
         <div class="error-title">${escapeHTML(judul)}</div>
         <div class="error-text">${escapeHTML(deskripsi)}</div>
         <div class="btn-row">
-          <button class="btn-dark" onclick="location.reload()">Muat Ulang</button>
+          <button class="btn-dark" onclick="location.reload()">Muat Ulang Halaman</button>
         </div>
       `;
     }
