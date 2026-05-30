@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Cikpus CyberLock Lite - PWA Fullscreen Lock</title>
+  <title>Cikpus CyberLock</title>
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#06101f">
   <meta name="mobile-web-app-capable" content="yes">
@@ -536,19 +536,18 @@
     <div class="panel" id="panel-konten">
       <h1 class="main-title">CIKPUS CYBERLOCK</h1>
       <div class="anti-cheat-title">Ujian Anti Curang !</div>
-      <div class="sub-title">LITE STABLE MODE - GOOGLE FORM</div>
 
       <div class="alert-box">
         <b>PERINGATAN UJIAN:</b><br><br>
         1. Gunakan 1 smartphone dan login email Google sebelum mulai.<br>
-        2. Isi identitas, jawab soal, dan isi pernyataan tidak menyontek dengan jujur.<br>
-        3. Gunakan hanya bagian kiri layar untuk scroll dan menjawab soal.<br>
-        4. Area kanan adalah zona pengawasan; sentuhan pertama diberi peringatan, berikutnya dikunci.<br>
-        5. Dilarang membuka Google, tab/aplikasi lain, split screen, screenshot, atau keluar halaman ujian. Tombol Selesai muncul setelah minimal 30 menit.
+        2. Isi identitas dan jawab semua soal dengan jujur.<br>
+        3. Gunakan bagian kiri layar untuk scroll dan menjawab soal.<br>
+        4. Area kanan adalah zona pengawasan.<br>
+        5. Dilarang split screen, screenshot, atau keluar halaman ujian. Klik tombol selesai untuk akhiri Ujian.
       </div>
 
       <div class="info-box">
-        Sistem memakai Google Spreadsheet. Tombol Selesai tidak muncul dari awal dan jika sudah selesai, ujian tidak bisa dibuka ulang di perangkat yang sama.
+        Tombol Selesai tidak muncul dari awal dan jika ujian selesai, ujian tidak bisa dibuka ulang di perangkat yang sama.
       </div>
 
       <div class="form-group">
@@ -556,7 +555,7 @@
         <input id="peserta-input" class="form-control" type="text" placeholder="Contoh: Ahmad Fauzi - XII TKRO 1" autocomplete="off" />
       </div>
 
-      <div class="status-text" id="status-text">Menghubungkan ke Google Spreadsheet...</div>
+      <div class="status-text" id="status-text">Menghubungkan ke Database...</div>
 
       <div class="btn-row">
         <a class="btn-link" href="https://accounts.google.com/" target="_blank" rel="noopener noreferrer">Login Email Google Dulu</a>
@@ -565,7 +564,7 @@
       </div>
 
       <div class="checklist" id="checklist-status">
-        Status: Database belum siap • Kamera belum aktif
+        Status: Database belum siap dan Kamera belum aktif !
       </div>
 
       <div class="small-note">
@@ -580,8 +579,8 @@
       <div class="center" id="clock-label">Memuat waktu...</div>
       <div class="right">
         <span id="duration-label">00:00</span>
-        <span id="offense-label">AMAN</span>
-        <span id="camera-label">KAMERA</span>
+        <span id="offense-label">PESERTA AMAN | </span>
+        <span id="camera-label">KAMERA AKTIF</span>
         <button id="btn-selesai-ujian" class="btn-finish" onclick="selesaikanUjian()" disabled>Selesai</button>
       </div>
     </div>
@@ -611,7 +610,7 @@
       <h2>🚨 UJIAN DIKUNCI 🚨</h2>
       <p id="lock-reason">Sistem mendeteksi aktivitas mencurigakan.</p>
       <p style="color:#ffb3b3;font-weight:bold;">
-        Panggil pengawas. Kunci hanya bisa dibuka dengan kode guru.
+        Panggil Pengawas! Kunci hanya bisa dibuka dengan kode guru.
       </p>
       <input type="password" id="token-input" class="input-secure" placeholder="KODE GURU" autocomplete="off" inputmode="text" />
       <button class="btn-danger" onclick="bukaKunciUjian()">BUKA KUNCI UJIAN</button>
@@ -716,7 +715,7 @@
       updateChecklist();
 
       if (!kodeUjian) {
-        tampilkanError("LINK SALAH", "Tambahkan kode ujian di URL. Contoh: ?id=INFO atau ?ID=INFO");
+        tampilkanError("LINK SALAH", "Tambahkan kode ujian di URL ! Contoh: ?id=INFO atau ?ID=INFO");
         return;
       }
 
@@ -728,14 +727,14 @@
       }
 
       if (localStorage.getItem(KEY_BREACH) === "true") {
-        kunciUjian("Sesi sebelumnya sudah terkunci karena pelanggaran.");
+        kunciUjian("Sesi sebelumnya sudah terkunci karena pelanggaran !");
         return;
       }
 
       const sesiAktif = bacaSesiAktif();
       if (sesiAktif && sesiAktif.tabId !== tabId && sesiMasihHidup(sesiAktif)) {
-        tampilkanError("TAB GANDA TERDETEKSI", "Ujian sudah aktif di tab lain. Tutup tab ini dan kembali ke tab pertama.");
-        kirimPesanTab({ type: "DUPLICATE_TAB", from: tabId, reason: "Peserta membuka link ujian di tab lain." });
+        tampilkanError("TAB GANDA TERDETEKSI", "Ujian sudah aktif di tab lain, Tutup tab ini dan kembali ke tab pertama !");
+        kirimPesanTab({ type: "DUPLICATE_TAB", from: tabId, reason: "Peserta membuka link ujian di tab lain !" });
         localStorage.setItem(KEY_BREACH, "true");
         return;
       }
@@ -762,14 +761,14 @@
         }
       }
 
-      ubahStatus("Menghubungkan ke Google Spreadsheet...");
+      ubahStatus("Menghubungkan ke Database...");
       await fetchDatabaseTerbaru(true);
     }
 
     async function refreshDatabaseManual() {
       sessionStorage.removeItem(KEY_CACHE_GLOBAL);
       localStorage.removeItem(KEY_CACHE_GLOBAL);
-      ubahStatus("Memuat ulang Google Spreadsheet...");
+      ubahStatus("Memuat ulang Database...");
       await fetchDatabaseTerbaru(true);
     }
 
@@ -799,7 +798,7 @@
         }
 
         setDataUjian(dataUjian, "spreadsheet");
-        aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Silakan login email Google, lalu klik Mulai Ujian.`);
+        aktifkanTombolMulai(`Ujian Mapel : ${namaMapel} siap, Silakan login email Google, lalu klik Mulai Ujian.`);
       } catch (error) {
         const cacheLama = ambilCacheDatabase(true);
 
@@ -809,7 +808,7 @@
 
           if (dataCache && dataCache.link) {
             setDataUjian(dataCache, "cache lama");
-            aktifkanTombolMulai(`Ujian siap: ${namaMapel}. Memakai data terakhir karena Spreadsheet lambat.`);
+            aktifkanTombolMulai(`Ujian Mapel : ${namaMapel} siap, Memakai data terakhir karena Spreadsheet lambat.`);
             return;
           }
         }
@@ -868,7 +867,7 @@
             if (!selesai && gagal >= daftarURL.length) {
               selesai = true;
               clearTimeout(timeoutGlobal);
-              reject(new Error("Semua jalur database gagal."));
+              reject(new Error("Semua jalur database gagal !"));
             }
           });
         });
@@ -912,20 +911,20 @@
       peserta = document.getElementById("peserta-input").value.trim();
 
       if (!peserta) {
-        alert("Isi nama dan kelas terlebih dahulu.");
+        alert("Isi nama dan kelas terlebih dahulu !");
         return;
       }
 
       if (!databaseSiap || !linkGoogleForm) {
-        alert("Database ujian belum siap. Klik Muat Ulang Database atau tunggu beberapa saat.");
+        alert("Database ujian belum siap. Klik Muat Ulang Database atau tunggu beberapa saat !");
         return;
       }
 
       const sesiAktif = bacaSesiAktif();
       if (sesiAktif && sesiAktif.tabId !== tabId && sesiMasihHidup(sesiAktif)) {
         localStorage.setItem(KEY_BREACH, "true");
-        kirimPesanTab({ type: "DUPLICATE_TAB", from: tabId, reason: "Tab kedua mencoba memulai ujian." });
-        kunciUjian("Tab ganda terdeteksi. Ujian hanya boleh dibuka pada satu tab.");
+        kirimPesanTab({ type: "DUPLICATE_TAB", from: tabId, reason: "Tab kedua mencoba memulai ujian !" });
+        kunciUjian("Tab ganda terdeteksi. Ujian hanya boleh dibuka pada satu tab !");
         return;
       }
 
@@ -933,7 +932,7 @@
         await mintaIzinKamera();
         mulaiUjian();
       } catch (error) {
-        alert("Kamera wajib diaktifkan untuk mengikuti ujian.");
+        alert("Kamera wajib diaktifkan untuk mengikuti Ujian !");
       }
     }
 
@@ -996,7 +995,7 @@
     function mintaIzinKamera() {
       return new Promise((resolve, reject) => {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          reject(new Error("Browser tidak mendukung kamera."));
+          reject(new Error("Browser tidak mendukung kamera !"));
           return;
         }
 
@@ -1022,13 +1021,13 @@
         if (!examAktif || statusTerkunci) return;
 
         if (!lokalStream) {
-          prosesPelanggaran("Kamera tidak aktif atau dimatikan.");
+          prosesPelanggaran("Kamera tidak aktif atau dimatikan !");
           return;
         }
 
         const tracks = lokalStream.getVideoTracks();
         if (!tracks.length || tracks[0].readyState !== "live" || tracks[0].muted) {
-          prosesPelanggaran("Kamera terputus atau dimatikan saat ujian berlangsung.");
+          prosesPelanggaran("Kamera terputus atau dimatikan saat ujian berlangsung !");
         }
       }, 2500);
     }
@@ -1089,7 +1088,7 @@
 
     function selesaikanUjian() {
       if (!tombolSelesaiAktif) {
-        alert("Tombol Selesai belum aktif. Selesaikan ujian sesuai waktu dan alur Google Form.");
+        alert("Tombol Selesai belum aktif. Selesaikan ujian sesuai waktu dan alur Google Form !");
         return;
       }
 
@@ -1145,7 +1144,7 @@
         <div class="info-box" style="text-align:center;">
           Ujian sudah ditutup pada perangkat ini.<br><br>Pastikan jawaban sudah dikirim di Google Form.<br><br>
           <b>Durasi pengerjaan: ${durasiFinal}</b><br><br>
-          Silakan panggil pengawas atau tutup halaman ini sesuai arahan guru.
+          Silakan panggil pengawas atau tutup halaman ini sesuai arahan guru !
         </div>
       `;
 
@@ -1268,14 +1267,14 @@
       jumlahSentuhanZonaKanan++;
 
       if (jumlahSentuhanZonaKanan <= BATAS_PERINGATAN_ZONA_KANAN) {
-        tampilPeringatanZonaKanan("PERINGATAN 1: Area kanan adalah zona pengawasan. Gunakan area kiri untuk scroll dan menjawab soal. Jika terulang, ujian dikunci.");
+        tampilPeringatanZonaKanan("PERINGATAN 1: Area kanan adalah zona pengawasan. Gunakan area kiri untuk scroll dan menjawab soal. Jika terulang, ujian akan dikunci.");
         document.getElementById("offense-label").innerText = `ZONA: ${jumlahSentuhanZonaKanan}`;
         masukFullscreen();
         return;
       }
 
       tampilIndikator("Zona kanan disentuh kembali");
-      prosesPelanggaran(`${alasan} Peringatan zona kanan sudah diberikan.`);
+      prosesPelanggaran(`${alasan} Peringatan zona kanan sudah diberikan !`);
     }
 
     function tampilPeringatanZonaKanan(teks) {
@@ -1342,22 +1341,22 @@
       }
 
       if (examAktif && document.hidden && !statusTerkunci) {
-        prosesPelanggaran("Peserta membuka aplikasi/tab lain atau keluar dari halaman ujian.");
+        prosesPelanggaran("Peserta membuka aplikasi/tab lain atau keluar dari halaman ujian !");
       }
     });
 
     window.addEventListener("pagehide", () => {
       if (examAktif && !statusTerkunci && !sistemSedangUnlock) {
         localStorage.setItem(KEY_BREACH, "true");
-        tulisLog("Halaman ujian ditutup atau dipindahkan.");
+        tulisLog("Halaman ujian ditutup atau dipindahkan !");
       }
     });
 
     window.addEventListener("beforeunload", () => {
       if (examAktif && !statusTerkunci && !sistemSedangUnlock) {
         localStorage.setItem(KEY_BREACH, "true");
-        tulisLog("Peserta menutup atau me-refresh halaman saat ujian aktif.");
-        kirimPesanTab({ type: "LOCK", from: tabId, reason: "Halaman ujian ditutup atau di-refresh." });
+        tulisLog("Peserta menutup atau me-refresh halaman saat ujian aktif !");
+        kirimPesanTab({ type: "LOCK", from: tabId, reason: "Halaman ujian ditutup atau di-refresh !" });
       }
     });
 
@@ -1368,7 +1367,7 @@
       if (!examAktif || statusTerkunci) return;
       const fullscreenAktif = document.fullscreenElement || document.webkitFullscreenElement;
       if (!fullscreenAktif) {
-        prosesPelanggaran("Keluar dari layar penuh. Indikasi membuka aplikasi/tab lain.");
+        prosesPelanggaran("Keluar dari layar penuh. Indikasi membuka aplikasi/tab lain !");
       }
     }
 
@@ -1420,7 +1419,7 @@
       if (!fullscreenAktif) return;
 
       if (layarMengecilMencurigakan()) {
-        prosesPelanggaran("Split screen, popup, atau layar ujian mengecil terdeteksi.");
+        prosesPelanggaran("Split screen, popup, atau layar ujian mengecil terdeteksi !");
       }
     }
 
@@ -1590,7 +1589,7 @@
 
       if (token === TOKEN_UJI_COBA) {
         if (localStorage.getItem(KEY_TOKEN_UJI_COBA_USED) === "true") {
-          alert("Kode uji coba sudah pernah digunakan di perangkat/browser ini.");
+          alert("Kode Guru ini hanya bisa digunakan 1 kali saja !");
           return;
         }
 
@@ -1628,7 +1627,7 @@
         })
         .catch(() => {
           sistemSedangUnlock = false;
-          kunciUjian("Kamera belum aktif setelah pengawas membuka kunci.");
+          kunciUjian("Kamera belum aktif setelah pengawas membuka kunci !");
         });
     }
 
