@@ -508,6 +508,7 @@
     <div class="panel" id="panel-konten">
       <h1 class="main-title">CIKPUS CYBERLOCK</h1>
       <div class="sub-title">SMARTPHONE SECURE MODE - GOOGLE FORM</div>
+      <div class="sub-title">UJIAN ANTI CURANG !</div>
 
       <div class="alert-box">
         <b>PERINGATAN UJIAN:</b><br><br>
@@ -515,11 +516,11 @@
         2. Isi identitas, jawab soal, dan isi pernyataan tidak menyontek dengan jujur.<br>
         3. Gunakan hanya bagian kiri layar untuk scroll dan menjawab soal.<br>
         4. Area kanan layar adalah zona pengawasan tersembunyi; sentuhan pertama diberi peringatan, sentuhan berikutnya dikunci.<br>
-        5. Dilarang membuka Google, tab/aplikasi lain, split screen, screenshot, atau mode landscape.
+        5. Dilarang membuka Google, tab/aplikasi lain, split screen, screenshot, atau keluar dari halaman ujian.
       </div>
 
       <div class="info-box">
-        Setelah klik <b>Mulai Ujian</b>, kamera, layar penuh, mode potret, dan zona pengawasan kanan akan aktif sampai siswa klik <b>Selesai</b>.
+        Setelah klik <b>Mulai Ujian</b>, kamera, layar penuh, dan zona pengawasan kanan akan aktif sampai siswa klik <b>Selesai</b>. Jika HP otomatis berubah landscape saat fullscreen, sistem akan menyesuaikan dan tidak langsung mengunci.
       </div>
 
       <div class="form-group">
@@ -670,6 +671,7 @@
     let durationInterval = null;
     let orientationCheckInterval = null;
     let examStartedAt = 0;
+    let abaikanCekLayarSampai = 0;
 
     let channel = null;
     let sistemSedangUnlock = false;
@@ -942,9 +944,9 @@
       mulaiHeartbeat();
       mulaiCekKamera();
       mulaiCekLayar();
+      aktifkanToleransiPerubahanLayar(3000);
       mulaiProteksiSmartphone();
       mulaiDurasiUjian();
-      mulaiCekOrientasiPotret();
       aktifkanZonaKananPengawas();
       perbaruiWatermark();
       siapkanDeteksiSubmitForm();
@@ -964,23 +966,33 @@
     }
 
     function masukFullscreen() {
+      aktifkanToleransiPerubahanLayar(2500);
+
       const elem = document.documentElement;
 
       if (elem.requestFullscreen) {
         elem.requestFullscreen()
-          .then(() => kunciOrientasiPotret())
+          .then(() => {
+            aktifkanToleransiPerubahanLayar(2500);
+            setTimeout(() => {
+              simpanUkuranAwalLayar();
+              simpanUkuranAwalProteksi();
+            }, 1200);
+          })
           .catch(() => {});
       } else if (elem.webkitRequestFullscreen) {
         elem.webkitRequestFullscreen();
-        setTimeout(kunciOrientasiPotret, 500);
+        aktifkanToleransiPerubahanLayar(2500);
+        setTimeout(() => {
+          simpanUkuranAwalLayar();
+          simpanUkuranAwalProteksi();
+        }, 1200);
       }
     }
 
-    function kunciOrientasiPotret() {
-      try {
-        if (screen.orientation && screen.orientation.lock) {
-          screen.orientation.lock("portrait-primary").catch(() => {});
-        }
+    function aktifkanToleransiPerubahanLayar(ms = 2500) {
+      abaikanCekLayarSampai = Date.now() + ms;
+    }
       } catch (e) {}
     }
 
@@ -1110,9 +1122,8 @@
 
       sistemSedangUnlock = false;
     }
-
     // ============================================================
-    // DURASI UJIAN & MODE POTRET
+    // DURASI UJIAN
     // ============================================================
     function mulaiDurasiUjian() {
       if (durationInterval) clearInterval(durationInterval);
@@ -1139,29 +1150,6 @@
       return `${mm}:${ss}`;
     }
 
-    function mulaiCekOrientasiPotret() {
-      kunciOrientasiPotret();
-
-      if (orientationCheckInterval) clearInterval(orientationCheckInterval);
-      orientationCheckInterval = setInterval(cekOrientasiPotret, 1200);
-
-      window.addEventListener("orientationchange", () => {
-        setTimeout(() => {
-          kunciOrientasiPotret();
-          cekOrientasiPotret();
-        }, 800);
-      });
-    }
-
-    function cekOrientasiPotret() {
-      if (!examAktif || statusTerkunci) return;
-
-      const landscapeByMedia = window.matchMedia && window.matchMedia("(orientation: landscape)").matches;
-      const landscapeBySize = window.innerWidth > window.innerHeight * 1.12;
-
-      if (landscapeByMedia || landscapeBySize) {
-        prosesPelanggaran("Mode landscape terdeteksi. Ujian wajib menggunakan mode potret.");
-      }
     }
 
     // ============================================================
@@ -1326,11 +1314,12 @@
       });
 
       window.addEventListener("orientationchange", () => {
+        aktifkanToleransiPerubahanLayar(3500);
+
         setTimeout(() => {
           simpanUkuranAwalLayar();
           simpanUkuranAwalProteksi();
-          cekKeamananLayar("Orientasi layar berubah");
-        }, 1200);
+        }, 1500);
       });
 
       if (window.visualViewport) {
@@ -1371,6 +1360,7 @@
 
     function cekKeamananLayar(alasan) {
       if (!examAktif || statusTerkunci || !layarAwalProteksi) return;
+      if (Date.now() < abaikanCekLayarSampai) return;
 
       const fullscreenAktif = document.fullscreenElement || document.webkitFullscreenElement;
 
@@ -1425,6 +1415,7 @@
 
     function cekLayarTerbagi() {
       if (!examAktif || statusTerkunci || !ukuranAwal) return;
+      if (Date.now() < abaikanCekLayarSampai) return;
 
       const fullscreenAktif = document.fullscreenElement || document.webkitFullscreenElement;
       if (!fullscreenAktif) return;
