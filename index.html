@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Cikpus CyberLock Lite - Lock Total 30 Menit</title>
+  <title>Cikpus CyberLock Lite - PWA Fullscreen Lock</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#06101f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="CyberLock">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <link rel="preconnect" href="https://docs.google.com">
   <link rel="preconnect" href="https://accounts.google.com">
@@ -410,7 +416,13 @@
     #lock-overlay {
       display: none;
       position: fixed;
-      inset: 0;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 100vh;
+      min-height: 100dvh;
       z-index: 2147483647;
       align-items: center;
       justify-content: center;
@@ -423,6 +435,7 @@
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
+      overscroll-behavior: none;
     }
 
     @keyframes redFlash {
@@ -600,7 +613,7 @@
       <p style="color:#ffb3b3;font-weight:bold;">
         Panggil pengawas. Kunci hanya bisa dibuka dengan kode guru.
       </p>
-      <input type="password" id="token-input" class="input-secure" placeholder="KODE GURU" autocomplete="off" />
+      <input type="password" id="token-input" class="input-secure" placeholder="KODE GURU" autocomplete="off" inputmode="text" />
       <button class="btn-danger" onclick="bukaKunciUjian()">BUKA KUNCI UJIAN</button>
     </div>
   </div>
@@ -668,6 +681,7 @@
     let durationInterval = null;
     let examStartedAt = 0;
     let scaleCheckInterval = null;
+    let lockFullscreenInterval = null;
     let abaikanCekLayarSampai = 0;
 
     let channel = null;
@@ -1106,6 +1120,7 @@
       if (clockInterval) clearInterval(clockInterval);
       if (durationInterval) clearInterval(durationInterval);
       if (scaleCheckInterval) clearInterval(scaleCheckInterval);
+      if (lockFullscreenInterval) clearInterval(lockFullscreenInterval);
       if (fokusHilangTimer) clearTimeout(fokusHilangTimer);
       if (longPressTimer) clearTimeout(longPressTimer);
       if (guardLongPressTimer) clearTimeout(guardLongPressTimer);
@@ -1120,6 +1135,8 @@
       iframe.src = "about:blank";
 
       document.body.classList.remove("exam-mode", "secure-blur", "locked-mode");
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
       document.getElementById("exam-screen").style.display = "none";
       document.getElementById("start-screen").style.display = "flex";
       document.getElementById("panel-konten").innerHTML = `
@@ -1145,6 +1162,7 @@
     function mulaiDurasiUjian() {
       if (durationInterval) clearInterval(durationInterval);
       if (scaleCheckInterval) clearInterval(scaleCheckInterval);
+      if (lockFullscreenInterval) clearInterval(lockFullscreenInterval);
       updateDurasiUjian();
       durationInterval = setInterval(updateDurasiUjian, 1000);
     }
@@ -1318,6 +1336,11 @@
     // PROTEKSI INTI
     // ============================================================
     document.addEventListener("visibilitychange", () => {
+      if (statusTerkunci && !document.hidden) {
+        setTimeout(paksaFullscreenSaatTerkunci, 250);
+        return;
+      }
+
       if (examAktif && document.hidden && !statusTerkunci) {
         prosesPelanggaran("Peserta membuka aplikasi/tab lain atau keluar dari halaman ujian.");
       }
@@ -1495,6 +1518,34 @@
       masukFullscreen();
     }
 
+
+    function paksaFullscreenSaatTerkunci() {
+      if (!statusTerkunci) return;
+
+      const fullscreenAktif = document.fullscreenElement || document.webkitFullscreenElement;
+
+      if (!fullscreenAktif) {
+        masukFullscreen();
+      }
+    }
+
+    function mulaiPaksaFullscreenTerkunci() {
+      if (lockFullscreenInterval) clearInterval(lockFullscreenInterval);
+
+      paksaFullscreenSaatTerkunci();
+
+      lockFullscreenInterval = setInterval(() => {
+        paksaFullscreenSaatTerkunci();
+      }, 900);
+    }
+
+    function hentikanPaksaFullscreenTerkunci() {
+      if (lockFullscreenInterval) {
+        clearInterval(lockFullscreenInterval);
+        lockFullscreenInterval = null;
+      }
+    }
+
     // ============================================================
     // LOCK
     // ============================================================
@@ -1509,6 +1560,8 @@
       document.getElementById("lock-reason").innerText = alasan;
       document.getElementById("lock-overlay").style.display = "flex";
       document.body.classList.add("secure-blur", "locked-mode");
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
 
       const iframe = document.getElementById("ujian-frame");
       if (iframe) iframe.style.pointerEvents = "none";
@@ -1524,6 +1577,7 @@
       }
 
       document.getElementById("camera-label").innerText = "TERKUNCI";
+      mulaiPaksaFullscreenTerkunci();
     }
 
     function bukaKunciUjian() {
@@ -1553,7 +1607,10 @@
       statusTerkunci = false;
       localStorage.removeItem(KEY_BREACH);
 
+      hentikanPaksaFullscreenTerkunci();
       document.body.classList.remove("secure-blur", "locked-mode");
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
       document.getElementById("lock-overlay").style.display = "none";
 
       const iframe = document.getElementById("ujian-frame");
@@ -1936,6 +1993,12 @@
         .replace(/>/g, "&gt;")
         .replace(/\"/g, "&quot;")
         .replace(/'/g, "&#039;");
+    }
+  
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+      });
     }
   </script>
 </body>
