@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Cikpus CyberLock Lite Sederhana</title>
+  <title>Cikpus CyberLock</title>
 
   <link rel="preconnect" href="https://docs.google.com">
   <link rel="preconnect" href="https://accounts.google.com">
@@ -514,12 +514,12 @@
     <div class="panel" id="panel-konten">
       <h1 class="main-title">CIKPUS CYBERLOCK</h1>
       <div class="anti-cheat-title">Ujian Anti Curang !</div>
-      <div class="sub-title">LITE STABLE MODE - GOOGLE FORM</div>
+      <div class="sub-title">STABLE MODE - GOOGLE FORM</div>
 
       <div class="alert-box">
         <b>PERINGATAN UJIAN:</b><br><br>
         1. Gunakan 1 smartphone dan login email Google sebelum mulai.<br>
-        2. Isi identitas, jawab soal, dan isi pernyataan tidak menyontek dengan jujur.<br>
+        2. Isi isi semua pernyataan dengan jujur dan tidak menyontek.<br>
         3. Gunakan hanya bagian kiri layar untuk scroll dan menjawab soal.<br>
         4. Area kanan adalah zona pengawasan; sentuhan pertama diberi peringatan, berikutnya dikunci.<br>
         5. Tombol Selesai muncul setelah ujian berjalan minimal 30 menit.
@@ -610,6 +610,7 @@
 
     const BATAS_PERINGATAN_ZONA_KANAN = 1;
     const MIN_DURASI_TOMBOL_SELESAI_MS = 30 * 60 * 1000; // 30 menit
+    const MIN_LOAD_FORM_SELESAI = 3; // Form 3 bagian
 
     const DATABASE_CACHE_TTL = 60 * 60 * 1000; // 1 jam
     const DATABASE_FETCH_TIMEOUT = 5500;
@@ -1836,7 +1837,7 @@
         <h1 class="main-title">UJIAN SUDAH SELESAI</h1>
         <div class="anti-cheat-title">Akses Ditutup</div>
         <div class="info-box" style="text-align:center;">
-          Ujian dengan kode <b>${escapeHTML(kodeUjian.toUpperCase())}</b> sudah ditutup pada perangkat/browser ini.<br><br>
+          Ujian dengan kode <b>${escapeHTML(kodeUjian.toUpperCase())}</b> mapel b>${escapeHTML(namaMapel.toUpperCase())}</b> sudah ditutup pada perangkat/browser ini.<br><br>
           Jika ini kesalahan, hubungi pengawas/guru.
         </div>
       `;
